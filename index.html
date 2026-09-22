@@ -55,7 +55,7 @@ svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-widt
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ---------- Header ---------- */
-.topbar{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--ink);color:#fff;min-height:60px}
+.topbar{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--ink);color:#fff;min-height:60px;position:relative;z-index:1600}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
 .logo{display:flex;align-items:center;padding:8px 11px;border-radius:9px;background:#fff}
 .logo img{display:block;height:20px;width:auto}
@@ -67,6 +67,31 @@ svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%)}
 .search input{width:100%;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;padding:0 12px 0 36px;font-size:14px}
 .search input::placeholder{color:rgba(255,255,255,.62)}
+.q-hasil{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:1700;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);max-height:min(70vh,520px);overflow:auto;padding:6px}
+.q-judul{margin:8px 10px 4px;font-size:11.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+.q-item{display:block;width:100%;text-align:left;padding:8px 10px;border:0;background:none;border-radius:8px;cursor:pointer;font:inherit;color:inherit}
+.q-item:hover,.q-item:focus-visible{background:var(--soft);outline:none}
+.q-item b{display:block;font-size:13.5px}
+.q-item small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+.q-kosong{margin:6px 10px 10px;font-size:12.5px;color:var(--muted)}
+.q-memuat{display:flex;align-items:center;gap:8px;margin:6px 10px 10px;font-size:12.5px;color:var(--muted)}
+.q-memuat .putar{border-color:var(--line);border-top-color:var(--ink)}
+.pop-cari b{display:block;font-size:14px;margin-bottom:2px}
+.pop-cari small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.pop-aksi{display:grid;gap:6px;margin-top:10px}
+/* ---- panel kiri bisa dibuka-tutup ---- */
+.layout.sisi-tutup{grid-template-columns:0 1fr}
+.layout.sisi-tutup .sidebar{visibility:hidden;border-right:0;overflow:hidden}
+.tombol-sisi{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:1100;width:22px;height:56px;display:grid;place-items:center;padding:0;border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,61,121,.18);cursor:pointer}
+.tombol-sisi:hover{background:var(--soft)}
+.tombol-sisi svg{width:16px;height:16px;transition:transform .15s}
+.layout.sisi-tutup .tombol-sisi svg{transform:rotate(180deg)}
+.saran-head h2{flex:1}
+.tombol-potong{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tombol-lipat svg{transition:transform .15s}
+.saran-panel.terlipat > :not(.saran-head){display:none!important}
+.saran-panel.terlipat .tombol-lipat svg{transform:rotate(180deg)}
+.saran-panel.terlipat .saran-head h2{cursor:pointer}
 .search input:focus{outline:none;background:#fff;color:var(--ink);box-shadow:0 0 0 3px rgba(255,183,0,.6)}
 .search:focus-within{color:var(--muted)}
 .top-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
@@ -437,7 +462,7 @@ table.pic td{font-variant-numeric:tabular-nums}
 .saran-filter button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
 .sekitar-bar select{border:1px solid var(--line);border-radius:7px;padding:5px 6px;font-size:12.5px;background:#fff}
 .saran-panel{padding:12px 16px;border-bottom:1px solid var(--line-2);background:#FFFCF3}
-.saran-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
+.saran-head{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px}
 .saran-head h2{margin:0;font-size:14px}
 .saran-list{list-style:none;margin:8px 0 0;padding:0;max-height:260px;overflow:auto}
 .saran-list li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-top:1px solid #F0E6CC}
@@ -530,11 +555,12 @@ table.pic td{font-variant-numeric:tabular-nums}
       <button type="button" data-page="home" aria-current="page">Beranda</button>
       <button type="button" data-page="map">Peta</button>
     </nav>
-    <label class="search map-only">
-      <span class="sr-only">Cari prospek</span>
+    <div class="search map-only">
+      <label class="sr-only" for="q">Cari prospek atau lokasi</label>
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Cari nama, alamat, catatan, atau petugas" autocomplete="off">
-    </label>
+      <input id="q" type="search" placeholder="Cari prospek, alamat, tempat, atau tempel dari Google Maps" autocomplete="off" enterkeyhint="search" aria-controls="qHasil">
+      <div class="q-hasil" id="qHasil" hidden></div>
+    </div>
     <div class="top-actions">
       <button type="button" class="btn btn-dark map-only" id="btnFilter" aria-label="Filter prospek">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>
@@ -639,6 +665,7 @@ table.pic td{font-variant-numeric:tabular-nums}
 
     <section class="mapwrap" aria-label="Peta prospek">
       <div id="map"><div class="map-fail"><p>Memuat peta...</p></div></div>
+      <button type="button" class="tombol-sisi hide-m" id="btnSisi" aria-label="Sembunyikan panel kiri" aria-expanded="true" title="Sembunyikan panel kiri"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
       <div class="alat-peta">
         <div class="alat-bungkus">
           <button type="button" class="btn btn-sm btn-ink" id="btnAlat" aria-expanded="false">
@@ -1123,7 +1150,7 @@ const CONFIG = {
  * ================================================================ */
 const STATUS_MAP = new Map(CONFIG.STATUS.map(s => [s.id, s]));
 const KAT_MAP = new Map(CONFIG.KATEGORI.map(k => [k.id, k]));
-const KEY = { area: 'petaProspek.area', user: 'petaProspek.user', cache: 'petaProspek.cache', demo: 'petaProspek.demo', sort: 'petaProspek.sort', bannerDemo: 'petaProspek.bannerDemoDitutup', warna: 'petaProspek.warnaTitik' };
+const KEY = { sisi: 'petaProspek.sisiTutup', lipat: 'petaProspek.panelTerlipat', area: 'petaProspek.area', user: 'petaProspek.user', cache: 'petaProspek.cache', demo: 'petaProspek.demo', sort: 'petaProspek.sort', bannerDemo: 'petaProspek.bannerDemoDitutup', warna: 'petaProspek.warnaTitik' };
 const TIM_FIELDS = ['nama', 'jabatan', 'warna'];
 const SEMUA_TIM = 'Semua tim';
 const TANPA_PIC = 'Belum ada PIC';
@@ -1857,7 +1884,7 @@ function renderList() {
   }
   if (!arr.length) {
     list.innerHTML = `<li class="empty"><strong>Tidak ada prospek yang cocok</strong><p>Ubah kata pencarian atau filter untuk melihat prospek lain.</p>
-      ${S.q ? `<button type="button" class="btn btn-ink btn-sm" data-empty="cari">Cari "${esc(S.q)}" sebagai tempat baru</button> ` : ''}
+      ${S.q ? `<button type="button" class="btn btn-ink btn-sm tombol-potong" data-empty="cari" title="${esc($('#q').value.trim())}">Cari lokasinya di peta</button> ` : ''}
       <button type="button" class="btn btn-line btn-sm" data-empty="clear">Hapus pencarian dan filter</button></li>`;
     return;
   }
@@ -3872,11 +3899,12 @@ async function cariSekitar(wilayah) {
     S.saranDariSimpanan = !!jawaban.dariSimpanan;
     const adaNama = new Set(S.prospek.map(p => normalNama(p.nama)));
     const dipakai = [];
-    const hasil = mentah
+    const dalamWilayah = mentah
       .filter((x, i, arr) => arr.findIndex(y =>
         normalNama(y.nama) === normalNama(x.nama) && jarakKm(y, x) < 0.15) === i)
       .map(x => Object.assign(x, { jarak: jarakKm(pusat, x) }))
-      .filter(x => wilayah.kotak || wilayah.poly || x.jarak * 1000 <= wilayah.radius + 50)
+      .filter(x => wilayah.kotak || wilayah.poly || x.jarak * 1000 <= wilayah.radius + 50);
+    const hasil = dalamWilayah
       .filter(x => {
         if (adaNama.has(normalNama(x.nama))) return false;
         if (S.prospek.some(p => { const ll = latlng(p); return ll && jarakKm({ lat: ll[0], lng: ll[1] }, x) < 0.04; })) return false;
@@ -3892,11 +3920,14 @@ async function cariSekitar(wilayah) {
     if (!S.saranJenis) S.saranJenis = 'semua';
     renderSaran();
     if (hasil.length && mqMobile.matches) { setView('list'); $('#saranPanel').scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' }); }
+    if (hasil.length) bukaSisiBilaTertutup();
     if (!hasil.length) {
-      const semuaSudahAda = mentah.length > 0;
+      // "Semua sudah ada" hanya bila memang ada tempat di dalam wilayah, dan semuanya sudah jadi prospek.
+      const semuaSudahAda = dalamWilayah.length > 0;
       toast(semuaSudahAda
-        ? 'Semua ' + mentah.length + ' tempat usaha di area ini sudah ada di daftar prospek Anda.'
+        ? 'Semua ' + dalamWilayah.length + ' tempat usaha di area ini sudah ada di daftar prospek Anda.'
         : 'Belum ada tempat usaha yang terdata di area ini. Coba perbesar jarak pencarian atau geser areanya.', semuaSudahAda ? '' : 'err');
+      if (!semuaSudahAda) bukaSisiBilaTertutup();
       if (!semuaSudahAda && !wilayah.kotak) tawarkanPerluas(wilayah);
     }
   } catch (e) {
@@ -4038,6 +4069,7 @@ function tawarkanPerluas(wilayah) {
 
 function tampilkanGagalSekitar(pesan, catatan) {
   const panel = $('#saranPanel');
+  bukaSisiBilaTertutup();
   delete panel.dataset.sementara;
   const rinci = (catatan || []).map(x => x.server.replace('https://', '').split('/')[0] + ' lewat ' + x.cara + ': ' + x.kode).join(', ');
   panel.hidden = false;
@@ -4509,6 +4541,180 @@ async function tampilkanStatusBank() {
 }
 
 /* ================================================================
+ *  KOLOM PENCARIAN ATAS: prospek tersimpan dan lokasi di peta
+ * ================================================================ */
+let cariAtasNomor = 0;
+
+/** Mengubah teks apa pun (tautan, koordinat, Plus Code, alamat, nama tempat) menjadi daftar lokasi. */
+async function cariLokasiUntukTeks(q) {
+  const cabang = { lat: CONFIG.PETA_AWAL.lat, lng: CONFIG.PETA_AWAL.lng };
+  const tautan = ambilTautanMaps(q);
+  if (tautan) {
+    let t = koordinatDariUrl(tautan);
+    let nama = namaDariTautan(tautan);
+    if (!t && !S.demo) {
+      try {
+        const r = await api('resolveLink', { tautan: tautan });
+        t = koordinatDariUrl(r.url || '') || koordinatDariUrl(r.isi || '');
+        nama = nama || namaDariTautan(r.url || '');
+      } catch (e) { /* lanjut, dianggap tidak ketemu */ }
+    }
+    return t ? [{ lat: t.lat, lng: t.lng, nama: nama || 'Titik dari tautan Google Maps', alamat: '', tingkat: 'tepat', sumberCari: 'tautan Google Maps' }] : [];
+  }
+  const k = bacaKoordinat(q);
+  if (k) return [{ lat: k.lat, lng: k.lng, nama: 'Koordinat ' + k.lat.toFixed(5) + ', ' + k.lng.toFixed(5), alamat: '', tingkat: 'tepat', sumberCari: 'koordinat' }];
+  let plus = bacaPlusCode(q, cabang);
+  if (plus && jarakKm(cabang, plus) > 60) plus = bacaPlusCode(q, pusatPeta()) || plus;
+  if (plus) return [{ lat: plus.lat, lng: plus.lng, nama: 'Titik dari Plus Code', alamat: q, tingkat: 'tepat', sumberCari: 'Plus Code' }];
+
+  const pisah = pisahNamaAlamat(q);
+  const teksCari = pisah.nama ? pisah.alamat : q;
+  const [biasa, cerdas] = await Promise.all([
+    cariTempat(teksCari).catch(() => []),
+    pisah.nama && pisah.alamat ? cariLokasiCerdas({ nama: pisah.nama, alamat: pisah.alamat }).catch(() => null) : Promise.resolve(null)
+  ]);
+  const c0 = pusatPeta();
+  const dariCerdas = cerdas ? cerdas.kandidat.map(x => Object.assign({}, x, { sumberCari: x.sumber === 'bank data' ? 'bank data' : 'nama dan alamat', jarak: jarakKm(c0, x) })) : [];
+  let hasil = gabungHasil(dariCerdas, biasa);
+  if (!hasil.length) {
+    const akhir = await cariLokasiCerdas({ nama: '', alamat: q }).catch(() => null);
+    if (akhir) hasil = akhir.kandidat.map(x => Object.assign({}, x, { sumberCari: 'variasi alamat', jarak: jarakKm(c0, x) }));
+  }
+  return hasil.slice(0, 8);
+}
+
+async function cariDariKolomAtas(q, pilihPertama) {
+  const kotak = $('#qHasil');
+  q = String(q || '').trim();
+  if (q.length < 3) { kotak.hidden = true; S.qHasil = null; return; }
+  const nomor = ++cariAtasNomor;
+  const kata = q.toLowerCase();
+  const prospek = S.prospek.filter(p => [p.nama, p.alamat, p.catatan, p.petugas, p.industri].join(' ').toLowerCase().includes(kata)).slice(0, 4);
+  S.qHasil = { prospek: prospek, lokasi: null, teks: q };
+  gambarHasilAtas();
+  let lokasi = [];
+  try { lokasi = await cariLokasiUntukTeks(q); } catch (e) { lokasi = []; }
+  if (nomor !== cariAtasNomor) return;
+  S.qHasil.lokasi = lokasi;
+  if (pilihPertama && lokasi.length) { pilihLokasiAtas(lokasi[0]); return; }
+  gambarHasilAtas();
+}
+
+function gambarHasilAtas() {
+  const kotak = $('#qHasil');
+  const h = S.qHasil;
+  if (!h) { kotak.hidden = true; return; }
+  let html = '';
+  if (h.prospek.length) {
+    html += '<p class="q-judul">Prospek tersimpan</p>' + h.prospek.map(p =>
+      `<button type="button" class="q-item" data-q-prospek="${esc(p.id)}"><b>${esc(p.nama)}</b><small>${esc([p.status, p.alamat].filter(Boolean).join(', ') || '-')}</small></button>`).join('');
+  }
+  html += '<p class="q-judul">Lokasi di peta</p>';
+  if (h.lokasi === null) {
+    html += '<div class="q-memuat"><span class="putar" aria-hidden="true"></span>Mencari lokasi...</div>';
+  } else if (!h.lokasi.length) {
+    html += '<p class="q-kosong">Lokasi tidak ketemu. Coba nama tempat dan kelurahannya, atau tempel koordinat, tautan, atau Plus Code dari Google Maps.</p>';
+  } else {
+    html += h.lokasi.map((x, i) => {
+      const t = TINGKAT_LOKASI[x.tingkat] || TINGKAT_LOKASI.jalan;
+      return `<button type="button" class="q-item" data-q-lokasi="${i}"><b>${esc(x.nama || x.alamat || 'Lokasi')}</b>` +
+        (x.alamat && x.alamat !== x.nama ? `<small>${esc(x.alamat)}</small>` : '') +
+        `<small style="color:${t.warna};font-weight:700">${esc(t.label)}${x.sumberCari === 'bank data' ? ', dari bank data' : ''}${isFinite(x.jarak) ? ' · ' + x.jarak.toFixed(1) + ' km' : ''}</small></button>`;
+    }).join('');
+  }
+  kotak.innerHTML = html;
+  kotak.hidden = false;
+}
+
+function tutupHasilAtas() { $('#qHasil').hidden = true; }
+
+function pilihLokasiAtas(x) {
+  tutupHasilAtas();
+  $('#q').value = '';
+  if (S.q) { S.q = ''; renderAll(); }
+  bukaHalaman('map');
+  if (mqMobile.matches) setView('map');
+  setTimeout(() => tandaiLokasiCari(x), 60);
+}
+
+function tandaiLokasiCari(x) {
+  if (!S.map) return;
+  const ll = [x.lat, x.lng];
+  if (S.penandaCari) S.map.removeLayer(S.penandaCari);
+  S.penandaCari = L.marker(ll, {
+    icon: L.divIcon({ className: 'mk-wrap', html: pinSvg({ warna: '#D24B45', tinggi: 48, ikon: '<circle cx="8" cy="8" r="4.2"/>' }), iconSize: [36, 48], iconAnchor: [18, 48], popupAnchor: [0, -44] }),
+    zIndexOffset: 3000, keyboard: false
+  }).addTo(S.map);
+  const t = TINGKAT_LOKASI[x.tingkat] || TINGKAT_LOKASI.jalan;
+  S.penandaCari.bindPopup(`<div class="pop-cari"><b>${esc(x.nama || 'Lokasi pencarian')}</b>` +
+    (x.alamat && x.alamat !== x.nama ? `<small>${esc(x.alamat)}</small>` : '') +
+    `<small style="color:${t.warna};font-weight:700">${esc(t.label)}</small>
+    <div class="pop-aksi">
+      <button type="button" class="btn btn-sm btn-gold" data-cari-tambah>Tambah sebagai prospek</button>
+      <button type="button" class="btn btn-sm btn-line" data-cari-sekitar>Cari calon prospek di sekitar</button>
+      <button type="button" class="linkbtn" data-cari-hapus>Hapus penanda</button>
+    </div></div>`, { maxWidth: 280, autoPanPadding: [40, 60] });
+  S.lokasiCari = x;
+  S.map.setView(ll, Math.max(S.map.getZoom(), 17), { animate: !reduceMotion });
+  setTimeout(() => S.penandaCari && S.penandaCari.openPopup(), reduceMotion ? 0 : 350);
+}
+
+function hapusPenandaCari() {
+  if (S.penandaCari && S.map) S.map.removeLayer(S.penandaCari);
+  S.penandaCari = null; S.lokasiCari = null;
+}
+
+/* ================================================================
+ *  PANEL KIRI BISA DIBUKA-TUTUP
+ * ================================================================ */
+function aturSisi(tutup) {
+  const layout = $('#layout');
+  if (!layout) return;
+  layout.classList.toggle('sisi-tutup', tutup);
+  const b = $('#btnSisi');
+  if (b) {
+    b.setAttribute('aria-expanded', String(!tutup));
+    b.setAttribute('aria-label', tutup ? 'Tampilkan panel kiri' : 'Sembunyikan panel kiri');
+    b.title = tutup ? 'Tampilkan panel kiri' : 'Sembunyikan panel kiri';
+  }
+  store.set(KEY.sisi, !!tutup);
+  if (S.map) setTimeout(() => S.map.invalidateSize(), 60);
+}
+
+/** Kalau hasil muncul di panel kiri yang sedang tertutup, buka supaya terlihat. */
+function bukaSisiBilaTertutup() {
+  if (!mqMobile.matches && $('#layout') && $('#layout').classList.contains('sisi-tutup')) aturSisi(false);
+}
+
+const PANEL_LIPAT = ['saranPanel', 'areaPanel', 'rutePanel'];
+function pasangTombolLipat(panel) {
+  const tertutup = S.panelTerlipat.has(panel.id);
+  panel.classList.toggle('terlipat', tertutup);
+  const head = panel.querySelector('.saran-head');
+  if (!head) return;
+  let btn = head.querySelector('[data-lipat]');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'icon-btn tombol-lipat';
+    btn.dataset.lipat = panel.id;
+    btn.innerHTML = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>';
+    const tutup = head.querySelector('.icon-btn');
+    head.insertBefore(btn, tutup || null);
+  }
+  btn.setAttribute('aria-expanded', String(!tertutup));
+  btn.setAttribute('aria-label', tertutup ? 'Buka panel' : 'Lipat panel');
+  btn.title = tertutup ? 'Buka panel' : 'Lipat panel';
+}
+
+function lipatPanel(id) {
+  if (S.panelTerlipat.has(id)) S.panelTerlipat.delete(id); else S.panelTerlipat.add(id);
+  store.set(KEY.lipat, Array.from(S.panelTerlipat));
+  const el = document.getElementById(id);
+  if (el) pasangTombolLipat(el);
+}
+
+/* ================================================================
  *  IMPOR TARGET (misalnya dari Cakra)
  * ================================================================ */
 const KOLOM_IMPOR = {
@@ -4944,6 +5150,76 @@ function unduhCsv() {
 function bindEvents() {
   const onSearch = debounce(() => { S.q = $('#q').value.trim().toLowerCase(); renderAll(); }, 150);
   $('#q').addEventListener('input', onSearch);
+  // Kolom yang sama juga mencari lokasi di peta, dengan jeda supaya tidak menembak server di setiap huruf.
+  const cariAtasDebounce = debounce(() => cariDariKolomAtas($('#q').value), 700);
+  $('#q').addEventListener('input', cariAtasDebounce);
+  $('#q').addEventListener('focus', () => { if (S.qHasil && $('#q').value.trim().length >= 3) gambarHasilAtas(); });
+  $('#q').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const h = S.qHasil;
+      if (h && h.lokasi && h.lokasi.length && h.teks === $('#q').value.trim()) pilihLokasiAtas(h.lokasi[0]);
+      else cariDariKolomAtas($('#q').value, true);
+    } else if (e.key === 'Escape') tutupHasilAtas();
+    else if (e.key === 'ArrowDown') { const b = $('#qHasil .q-item'); if (b && !$('#qHasil').hidden) { e.preventDefault(); b.focus(); } }
+  });
+  $('#q').addEventListener('paste', e => {
+    const teks = e.clipboardData && e.clipboardData.getData('text');
+    if (!teks || !/\r?\n/.test(teks)) return;
+    e.preventDefault();
+    const rapi = teks.split(/\r?\n/).map(x => x.trim()).filter(Boolean).join(', ');
+    e.target.value = rapi;
+    e.target.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  $('#qHasil').addEventListener('click', e => {
+    const bp = e.target.closest('[data-q-prospek]');
+    if (bp) {
+      tutupHasilAtas();
+      const p = S.prospek.find(x => String(x.id) === bp.dataset.qProspek);
+      if (p) { bukaHalaman('map'); if (mqMobile.matches) setView('map'); setTimeout(() => pilih(String(p.id), { fly: true }), 60); }
+      return;
+    }
+    const bl = e.target.closest('[data-q-lokasi]');
+    if (bl && S.qHasil && S.qHasil.lokasi) pilihLokasiAtas(S.qHasil.lokasi[Number(bl.dataset.qLokasi)]);
+  });
+  $('#qHasil').addEventListener('keydown', e => {
+    const semua = $$('#qHasil .q-item');
+    const i = semua.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' && i < semua.length - 1) { e.preventDefault(); semua[i + 1].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (i > 0) semua[i - 1].focus(); else $('#q').focus(); }
+    else if (e.key === 'Escape') { tutupHasilAtas(); $('#q').focus(); }
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.search')) tutupHasilAtas(); });
+  // Tombol di dalam gelembung penanda hasil pencarian
+  $('#map').addEventListener('click', e => {
+    const x = S.lokasiCari;
+    if (!x) return;
+    if (e.target.closest('[data-cari-tambah]')) {
+      const namaBiasa = x.nama && !/^(Koordinat|Titik dari)/.test(x.nama) ? x.nama : '';
+      bukaFormProspek(null, { lat: x.lat, lng: x.lng, nama: namaBiasa, alamat: x.alamat || '' });
+      if (!x.alamat) isiAlamatDariTitik(x.lat, x.lng);
+    } else if (e.target.closest('[data-cari-sekitar]')) {
+      S.map.closePopup();
+      pasangLingkaran({ lat: x.lat, lng: x.lng }, S.area ? S.area.radius : Number($('#radiusSekitar').value || 500), { geser: false, cari: true });
+    } else if (e.target.closest('[data-cari-hapus]')) hapusPenandaCari();
+  });
+
+  // Panel kiri buka-tutup
+  $('#btnSisi').addEventListener('click', () => aturSisi(!$('#layout').classList.contains('sisi-tutup')));
+  S.panelTerlipat = new Set(store.get(KEY.lipat, []) || []);
+  PANEL_LIPAT.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    new MutationObserver(() => pasangTombolLipat(el)).observe(el, { childList: true });
+    pasangTombolLipat(el);
+  });
+  $('.sidebar').addEventListener('click', e => {
+    const b = e.target.closest('[data-lipat]');
+    if (b) { lipatPanel(b.dataset.lipat); return; }
+    const judul = e.target.closest('.saran-panel.terlipat .saran-head h2');
+    if (judul) lipatPanel(judul.closest('.saran-panel').id);
+  });
+  if (store.get(KEY.sisi, false) && !mqMobile.matches) aturSisi(true);
   $('#btnFilter').addEventListener('click', bukaFilter);
   $('#btnRefresh').addEventListener('click', () => loadData({ manual: true }));
 
@@ -5125,10 +5401,8 @@ function bindEvents() {
     if (emp) {
       if (emp.dataset.empty === 'add') bukaFormProspek(null);
       else if (emp.dataset.empty === 'cari') {
-        const kata = S.q;
-        bukaFormProspek(null);
-        $('#formProspek').elements.cari.value = kata;
-        jalankanPencarianTempat(kata);
+        $('#q').focus();
+        cariDariKolomAtas($('#q').value);
       } else hapusSemuaFilter();
       return;
     }
