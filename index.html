@@ -889,7 +889,7 @@ table.pic td{font-variant-numeric:tabular-nums}
     </header>
     <div class="dlg-body">
       <section id="impLangkah1">
-        <p class="impor-aman">Masukkan data usaha saja: nama, alamat, kategori, bidang usaha, dan catatan. Kolom seperti nomor rekening, CIF, NIK, nomor HP, dan email otomatis diabaikan.</p>
+        <p class="impor-aman">Masukkan data usaha saja: nama, alamat, kategori, bidang usaha, dan catatan. Kolom seperti nomor rekening, CIF, NIK, nomor HP, email, dan nama pemilik atau PIC otomatis diabaikan. Kolom lain yang bukan data pribadi, misalnya Kode Cabang atau Area, disimpan di catatan.</p>
         <label class="fld full"><span>Tempel dari Excel <em>salin sel termasuk baris judul, lalu tempel di sini</em></span>
           <textarea id="impTeks" rows="7" placeholder="Nama&#9;Alamat&#9;Segmen&#9;Bidang usaha&#10;PT Sinar Jaya&#9;Jl. KH Hasyim Ashari No 12, Cideng, Jakarta Pusat&#9;Komersial&#9;Distribusi"></textarea>
         </label>
@@ -2857,12 +2857,21 @@ async function cariLokasiCerdas(item) {
   };
 
   // 1. bank data (sudah dicocokkan sekaligus untuk semua nama sebelum fungsi ini dipanggil)
-  if (item.bank && item.bank.cocok && item.bank.skor >= 0.72) tambah(item.bank.cocok, 'tepat', 'bank data', item.bank.skor);
+  if (item.bank && item.bank.cocok && item.bank.skor >= 0.72) {
+    if (item.bank.ambigu && Array.isArray(item.bank.pilihan) && item.bank.pilihan.length > 1) {
+      // Nama yang sama ada di beberapa tempat (misalnya gerai waralaba): semuanya ditawarkan sebagai pilihan,
+      // yang terdekat dengan cabang atau paling cocok alamatnya di urutan pertama.
+      item.bank.pilihan.forEach(p => tambah(Object.assign({}, p, { lat: Number(p.lat), lng: Number(p.lng) }), 'tepat',
+        'bank data, beberapa tempat bernama sama', Math.max(0.5, (p.skor || 0.72) - 0.2)));
+    } else {
+      tambah(item.bank.cocok, 'tepat', 'bank data', item.bank.skor);
+    }
+  }
 
   // 2. nama usaha di sekitar cabang
   if (item.nama && !kandidat.length) {
-    (await photonCari(item.nama, cabang, 20, 8)).forEach(x => {
-      const sk = miripNama(item.nama, x.nama);
+    (await photonCari(namaInti(item.nama), cabang, 20, 8)).forEach(x => {
+      const sk = miripNama(namaInti(item.nama), x.nama);
       if (sk >= 0.6 && KUNCI_TEMPAT.includes(x.kunci)) tambah(x, 'tepat', 'nama usaha', sk);
     });
   }
@@ -2898,8 +2907,8 @@ async function cariLokasiCerdas(item) {
 
   // 4. alamat ketemu tapi belum tepat: cari nama usahanya di sekitar titik alamat
   if (item.nama && titikAlamat && !kandidat.some(x => x.tingkat === 'tepat')) {
-    (await photonCari(item.nama, titikAlamat, 1.5, 8)).forEach(x => {
-      const sk = miripNama(item.nama, x.nama);
+    (await photonCari(namaInti(item.nama), titikAlamat, 1.5, 8)).forEach(x => {
+      const sk = miripNama(namaInti(item.nama), x.nama);
       if (sk >= 0.5 && jarakKm(titikAlamat, x) <= 1.5) tambah(x, 'tepat', 'nama di sekitar alamat', sk + 0.1);
     });
   }
@@ -3076,17 +3085,26 @@ async function cariTempat(q, signal) {
   const tambah = (x, tingkat, sumber) => {
     if (!x || !isFinite(x.lat) || !isFinite(x.lng) || terlaluUmum(x)) return;
     if (jarakKm(cabang, x) > 60) return;
-    if (semua.some(y => jarakKm(y, x) < 0.03 && normalNama(y.nama) === normalNama(x.nama))) return;
-    semua.push(Object.assign({}, x, { tingkat: tingkat, sumberCari: sumber, jarak: jarakKm(c, x) }));
+    const baru = Object.assign({}, x, { tingkat: tingkat, sumberCari: sumber, jarak: jarakKm(c, x) });
+    const i = semua.findIndex(y => jarakKm(y, x) < 0.03 && normalNama(y.nama) === normalNama(x.nama));
+    if (i === -1) { semua.push(baru); return; }
+    // Tempat yang sama dari bank data lebih diutamakan daripada dari peta terbuka (ada alamat dan sumbernya).
+    if (sumber === 'bank data' && semua[i].sumberCari !== 'bank data') semua[i] = baru;
   };
 
   const tugas = [];
-  // 1. bank data wilayah cabang: nama persis tempat usaha
+  // 1. bank data (tab Tempat dan bank Jakarta Overture + OpenStreetMap): beberapa tempat bernama mirip,
+  //    diurutkan server dari kemiripan nama, kata wilayah di kueri (misalnya "tanjung duren"), dan jarak dari tengah peta.
   if (!S.demo && S.user && S.user.pin) {
-    tugas.push(api('cocokkanNama', { nama: [q] }).then(r => {
-      const h = r && r.hasil && r.hasil[0];
-      if (h && h.cocok && h.skor >= 0.6) tambah({ nama: h.cocok.nama, alamat: h.cocok.alamat, lat: Number(h.cocok.lat), lng: Number(h.cocok.lng), kunci: h.cocok.kunci, nilai: h.cocok.nilai }, 'tepat', 'bank data');
-    }).catch(() => {}));
+    tugas.push(api('cariNama', { q: q, acuan: c, maks: 6 }).then(r => {
+      (r && r.hasil || []).forEach((h, i) => tambah({ nama: h.nama, alamat: h.alamat, lat: Number(h.lat), lng: Number(h.lng),
+        kunci: h.kunci, nilai: h.nilai, sumberData: h.sumber, urutBank: i }, 'tepat', 'bank data'));
+    }).catch(() =>
+      // Code.gs versi lama belum mengenal cariNama: pakai cara lama.
+      api('cocokkanNama', { nama: [q] }).then(r => {
+        const h = r && r.hasil && r.hasil[0];
+        if (h && h.cocok && h.skor >= 0.6) tambah({ nama: h.cocok.nama, alamat: h.cocok.alamat, lat: Number(h.cocok.lat), lng: Number(h.cocok.lng), kunci: h.cocok.kunci, nilai: h.cocok.nilai }, 'tepat', 'bank data');
+      }).catch(() => {})));
   }
   // 2. Photon untuk nama dan alamat yang sudah dirapikan
   [q, rapi].filter((x, i, a) => x && a.indexOf(x) === i).forEach(kata => {
@@ -3109,6 +3127,7 @@ async function cariTempat(q, signal) {
   const urutan = { tepat: 0, jalan: 1, wilayah: 2 };
   return semua
     .sort((a, b) => (a.sumberCari === 'bank data' ? -1 : 0) - (b.sumberCari === 'bank data' ? -1 : 0) ||
+      ((a.urutBank !== undefined ? a.urutBank : 99) - (b.urutBank !== undefined ? b.urutBank : 99)) ||
       (urutan[a.tingkat] - urutan[b.tingkat]) || (a.jarak - b.jarak))
     .slice(0, 8);
 }
@@ -3220,7 +3239,7 @@ async function jalankanPencarianTempat(q) {
       return `<li><button type="button" data-hasil="${i}">
       <span class="sumber">${h.jarak < 100 ? h.jarak.toFixed(1) + ' km' : ''}</span>
       <b>${esc(h.nama || h.alamat)}</b>${h.alamat ? `<small>${esc(h.alamat)}</small>` : ''}
-      <small style="color:${t.warna};font-weight:700">${esc(t.label)}${h.sumberCari === 'bank data' ? ', dari bank data' : ''}</small>
+      <small style="color:${t.warna};font-weight:700">${esc(t.label)}${h.sumberCari === 'bank data' ? ', ' + labelSumberBank(h) : ''}</small>
     </button></li>`; }).join('');
     ul.hidden = false;
     S.hasilCari = hasil;
@@ -3562,7 +3581,7 @@ function kueriOverpass(wilayah, ringkas) {
     });
   }
   // Sintaks sama dengan versi awal yang terbukti berhasil: nwr dan "out center".
-  return `[out:json][timeout:${batasWaktu}];(${bagian.join('')});out center ${ringkas ? 150 : 400};`;
+  return `[out:json][timeout:${batasWaktu}];(${bagian.join('')});out center ${ringkas ? 600 : 2000};`;
 }
 
 /** Area luas dipecah jadi beberapa petak supaya server tidak kehabisan waktu. */
@@ -3728,9 +3747,12 @@ async function ambilDariBank(wilayah, catatan) {
     if (!r.hasil.length && !selesai) { catatan.push({ server: 'bank data', cara: 'Sheet', kode: 'belum lengkap', pesan: '' }); return null; }
     const hasil = r.hasil.map(x => {
       const tag = {}; if (x.kunci) tag[x.kunci] = x.nilai;
-      return { nama: x.nama, jenis: jenisUsaha(tag), kategori: tebakKategori(tag), alamat: x.alamat, lat: Number(x.lat), lng: Number(x.lng) };
+      return { nama: x.nama, jenis: jenisUsaha(tag), kategori: tebakKategori(tag), alamat: x.alamat, lat: Number(x.lat), lng: Number(x.lng), sumberData: x.sumber || '' };
     });
-    return { hasil: hasil, sumber: 'bank data wilayah cabang' + (selesai ? ', diperbarui ' + tglStr(selesai) : ', sebagian') };
+    const jkt = r.bank_jakarta && r.bank_jakarta.tercakup;
+    return { hasil: hasil, total: r.jumlah_gabung || hasil.length, merata: !!r.merata, sumber: jkt
+      ? 'bank data Jakarta (Overture + OpenStreetMap)' + (r.bank_jakarta.versi ? ', versi ' + String(r.bank_jakarta.versi).split(' ')[0] : '')
+      : 'bank data wilayah cabang' + (selesai ? ', diperbarui ' + tglStr(selesai) : ', sebagian') };
   } catch (e) {
     catatan.push({ server: 'bank data', cara: 'Sheet', kode: e.code || 'gagal', pesan: String(e.message || '').slice(0, 80) });
     return null;
@@ -3880,14 +3902,96 @@ function pesanGagalSekitar(catatan) {
 const KELOMPOK_SARAN = [
   { id: 'semua', label: 'Semua' },
   { id: 'usaha', label: 'Toko dan kantor', kata: /shop|office|craft|warehouse|industrial|commercial|retail|company|marketplace|fuel|car|bank|laundry|works|money|post/i },
-  { id: 'kesehatan', label: 'Kesehatan', kata: /pharmacy|clinic|doctors|dentist|hospital|veterinary|health/i },
-  { id: 'institusi', label: 'Sekolah dan institusi', kata: /school|college|university|kindergarten|government/i },
-  { id: 'kuliner', label: 'Kuliner dan hotel', kata: /restaurant|cafe|fast food|fast_food|hotel|guest|motel|hostel|resort|bakery|bar|pub|food court|ice cream/i }
+  { id: 'kesehatan', label: 'Kesehatan', kata: /pharmacy|clinic|doctor|dentist|dental|hospital|veterinary|health|medical|laborator|optic|physiotherap|midwife|maternity/i },
+  { id: 'institusi', label: 'Sekolah dan institusi', kata: /school|college|university|kindergarten|preschool|government|education|academy|place of learning|campus|tutor/i },
+  { id: 'kuliner', label: 'Kuliner dan hotel', kata: /restaurant|cafe|fast food|fast_food|hotel|guest|motel|hostel|resort|bakery|\bbar\b|\bpub\b|food court|ice cream|eatery|coffee|\bfood\b|catering|dessert|juice|\btea\b|lodging|\binn\b|noodle|bistro|diner|steak|grill|seafood|sushi|ramen|pizza|burger|barbecue|bbq/i }
 ];
 function kelompokSaran(x) {
   const t = String(x.jenis || '');
-  const k = KELOMPOK_SARAN.slice(1).find(g => g.kata.test(t));
+  // Kelompok khusus dicek lebih dulu, supaya "health care" atau "food service" tidak jatuh ke Toko dan kantor.
+  const urut = ['kesehatan', 'institusi', 'kuliner', 'usaha'].map(id => KELOMPOK_SARAN.find(g => g.id === id));
+  const k = urut.find(g => g && g.kata.test(t));
   return k ? k.id : 'usaha';
+}
+
+/** Berapa titik calon prospek yang digambar di peta, dan berapa baris daftar per halaman. */
+const SARAN_MAKS_PETA = (typeof CONFIG !== 'undefined' && CONFIG.SARAN_MAKS_PETA) || 600;
+const SARAN_PER_HALAMAN = 50;
+
+/** Memilih paling banyak `batas` tempat yang tersebar merata di seluruh area pencarian.
+ *  Area dibagi jadi kotak-kotak kecil dan setiap kotak mendapat giliran yang sama, jadi bagian padat di dekat
+ *  titik tengah tidak menghabiskan jatah dan tepi lingkaran tetap terisi. Hasilnya diurutkan dari yang terdekat. */
+function pilihMerata(daftar, batas) {
+  if (!daftar || daftar.length <= batas) return (daftar || []).slice();
+  let selatan = Infinity, utara = -Infinity, barat = Infinity, timur = -Infinity;
+  daftar.forEach(x => { selatan = Math.min(selatan, x.lat); utara = Math.max(utara, x.lat); barat = Math.min(barat, x.lng); timur = Math.max(timur, x.lng); });
+  const G = Math.max(4, Math.ceil(Math.sqrt(batas / 4)));
+  const tinggi = Math.max(1e-9, (utara - selatan) / G), lebar = Math.max(1e-9, (timur - barat) / G);
+  const sel = new Map();
+  daftar.forEach(x => {
+    const k = Math.min(G - 1, Math.floor((x.lat - selatan) / tinggi)) * G + Math.min(G - 1, Math.floor((x.lng - barat) / lebar));
+    if (!sel.has(k)) sel.set(k, []);
+    sel.get(k).push(x);
+  });
+  const mutu = x => (x.sumberData === 'OSM + Overture' ? 2 : 0) + (x.alamat ? 1 : 0);
+  const kelompok = [...sel.values()]
+    .map(arr => arr.map((x, i) => ({ x, i })).sort((a, b) => (mutu(b.x) - mutu(a.x)) || (a.i - b.i)).map(o => o.x))
+    .sort((a, b) => b.length - a.length);
+  const hasil = [];
+  for (let putaran = 0; hasil.length < batas; putaran++) {
+    let masihAda = false;
+    for (let i = 0; i < kelompok.length && hasil.length < batas; i++) {
+      if (putaran < kelompok[i].length) { hasil.push(kelompok[i][putaran]); masihAda = true; }
+    }
+    if (!masihAda) break;
+  }
+  return hasil.sort((a, b) => (a.jarak || 0) - (b.jarak || 0));
+}
+
+/** Nama jenis usaha dalam bahasa Indonesia untuk ditampilkan. Nilai aslinya tetap dipakai untuk pengelompokan. */
+const LABEL_JENIS = {
+  'convenience': 'minimarket', 'convenience store': 'minimarket', 'supermarket': 'supermarket', 'restaurant': 'restoran',
+  'cafe': 'kafe', 'coffee shop': 'kedai kopi', 'fast food': 'makanan cepat saji', 'fast food restaurant': 'makanan cepat saji',
+  'casual eatery': 'tempat makan', 'bakery': 'toko roti', 'pharmacy': 'apotek', 'clinic': 'klinik', 'hospital': 'rumah sakit',
+  'dentist': 'dokter gigi', 'doctors': 'dokter', 'doctor': 'dokter', 'bank': 'bank', 'atm': 'ATM', 'school': 'sekolah',
+  'kindergarten': 'TK', 'college': 'kampus', 'university': 'universitas', 'hotel': 'hotel', 'guest house': 'penginapan',
+  'fuel': 'SPBU', 'car repair': 'bengkel mobil', 'motorcycle repair': 'bengkel motor', 'laundry': 'laundry',
+  'hairdresser': 'salon', 'beauty': 'salon kecantikan', 'beauty salon': 'salon kecantikan', 'clothes': 'toko pakaian',
+  'electronics': 'toko elektronik', 'electronics store': 'toko elektronik', 'mobile phone': 'toko ponsel',
+  'hardware': 'toko bangunan', 'hardware home and garden store': 'toko bangunan dan perabot', 'furniture': 'toko mebel',
+  'company': 'kantor perusahaan', 'corporate or business office': 'kantor perusahaan', 'professional service': 'jasa profesional',
+  'technical service': 'jasa servis', 'shipping or delivery service': 'ekspedisi', 'post office': 'kantor pos',
+  'marketplace': 'pasar', 'market': 'pasar', 'food and beverage store': 'toko makanan dan minuman',
+  'fashion and apparel store': 'toko fesyen', 'automotive service': 'bengkel', 'vehicle parts store': 'toko suku cadang',
+  'real estate service': 'properti', 'travel service': 'agen perjalanan', 'printing service': 'percetakan',
+  'wholesaler': 'grosir', 'supplier or distributor': 'distributor', 'manufacturer': 'pabrik', 'warehouse': 'gudang',
+  'financial service': 'layanan keuangan', 'health care': 'layanan kesehatan', 'wellness service': 'spa dan perawatan',
+  'gym': 'pusat kebugaran', 'fitness centre': 'pusat kebugaran', 'place of learning': 'lembaga kursus',
+  'shopping': 'toko', 'shopping mall': 'pusat perbelanjaan', 'home service': 'jasa rumah', 'event or party service': 'jasa acara',
+  'building or construction service': 'jasa konstruksi', 'media service': 'jasa media', 'rental service': 'jasa sewa',
+  'food service': 'jasa boga', 'optician': 'optik', 'childcare': 'penitipan anak', 'driving school': 'kursus mengemudi',
+  'barber': 'pangkas rambut', 'steakhouse': 'restoran steak', 'laboratory': 'laboratorium', 'veterinary': 'dokter hewan',
+  'car wash': 'cuci mobil', 'car rental': 'rental mobil', 'money transfer': 'pengiriman uang', 'coworking space': 'ruang kerja bersama',
+  'internet cafe': 'warnet', 'copyshop': 'fotokopi', 'tailor': 'penjahit', 'books': 'toko buku', 'stationery': 'alat tulis',
+  'healthcare': 'layanan kesehatan', 'yes': 'usaha'
+};
+function labelJenis(j) {
+  const k = String(j || '').toLowerCase().trim();
+  return LABEL_JENIS[k] || String(j || '');
+}
+
+/** Label sumber untuk hasil pencarian dari bank data. */
+function labelSumberBank(x) {
+  const s = x && x.sumberData;
+  return s ? 'dari bank data (' + s + ')' : 'dari bank data';
+}
+
+/** Keterangan bank data Jakarta di panel status. */
+function labelBankJakarta(b) {
+  if (!b || (!b.aktif && !b.galat)) return 'belum dipasang (isi ID_BANK_JAKARTA di Code.gs)';
+  if (!b.aktif) return 'tidak terbaca: ' + esc(b.galat);
+  return fmtNum.format(b.jumlah || 0) + ' tempat (Overture + OpenStreetMap), versi ' + esc(String(b.versi || '-').split(' ')[0]) +
+    (b.indeks_nama ? ', pencarian nama aktif' : ', indeks nama belum ada');
 }
 
 function normalNama(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
@@ -3917,9 +4021,13 @@ async function cariSekitar(wilayah) {
         dipakai.push(x);
         return true;
       })
-      .sort((a, b) => a.jarak - b.jarak)
-      .slice(0, 120);
-    S.saranSemua = hasil;
+      .sort((a, b) => a.jarak - b.jarak);
+    // Semua kandidat disimpan; yang digambar dipilih merata di seluruh lingkaran, bukan yang terdekat saja.
+    S.saranPenuh = hasil;
+    S.saranSampelServer = !!jawaban.merata;
+    S.saranTotalServer = jawaban.total || 0;
+    S.saranTampil = SARAN_PER_HALAMAN;
+    S.saranSemua = pilihMerata(hasil, SARAN_MAKS_PETA);
     S.saranPusat = pusat;
     S.saranWilayah = wilayah;
     if (!S.saranJenis) S.saranJenis = 'semua';
@@ -4015,8 +4123,12 @@ function renderSaran() {
   if (S.saranLayer) S.saranLayer.clearLayers();
   const semua = S.saranSemua || [];
   if (!semua.length) { panel.hidden = true; return; }
+  const penuh = S.saranPenuh && S.saranPenuh.length ? S.saranPenuh : semua;
   const jenisAktif = S.saranJenis || 'semua';
-  S.saran = jenisAktif === 'semua' ? semua : semua.filter(x => kelompokSaran(x) === jenisAktif);
+  // Filter jenis memilih ulang dari daftar penuh, supaya jenis itu juga tersebar di seluruh area.
+  const penuhJenis = jenisAktif === 'semua' ? penuh : penuh.filter(x => kelompokSaran(x) === jenisAktif);
+  S.saran = jenisAktif === 'semua' ? semua : pilihMerata(penuhJenis, SARAN_MAKS_PETA);
+  const tampil = Math.min(S.saran.length, S.saranTampil || SARAN_PER_HALAMAN);
   const wilayah = S.saranWilayah || {};
   if (S.map) {
     if (!S.saranLayer) S.saranLayer = L.layerGroup().addTo(S.map);
@@ -4028,9 +4140,12 @@ function renderSaran() {
     } else if (S.saranPusat) {
       L.circle([S.saranPusat.lat, S.saranPusat.lng], { radius: wilayah.radius || 500, color: CONFIG_WARNA_SARAN, weight: 1, fillOpacity: .05 }).addTo(S.saranLayer);
     }
+    // Titik digambar di kanvas: ratusan titik tetap ringan saat peta digeser, termasuk di HP.
+    if (!S.kanvasSaran) S.kanvasSaran = L.canvas({ padding: 0.3 });
     S.saran.forEach((x, i) => {
-      L.marker([x.lat, x.lng], { icon: L.divIcon({ className: 'mk-wrap', html: '<span class="mk-saran"></span>', iconSize: [16, 16], iconAnchor: [8, 8] }), zIndexOffset: -200 })
-        .bindTooltip(esc(x.nama), { direction: 'top', offset: [0, -8] })
+      L.circleMarker([x.lat, x.lng], { renderer: S.kanvasSaran, radius: 6.5, color: CONFIG_WARNA_SARAN, weight: 3, dashArray: '3 3',
+        fillColor: '#fff', fillOpacity: 1 })
+        .bindTooltip(esc(x.nama), { direction: 'top', offset: [0, -6] })
         .on('click', () => tambahDariSaran(i))
         .addTo(S.saranLayer);
     });
@@ -4044,15 +4159,26 @@ function renderSaran() {
       <h2>Calon prospek di sekitar</h2>
       <button type="button" class="icon-btn" id="tutupSaran" aria-label="Tutup saran"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <p class="muted" style="margin:0;font-size:12.5px">${S.saran.length} dari ${semua.length} tempat pada ${lingkup} yang belum ada di daftar prospek. Sumber: ${esc(S.saranSumber || 'peta terbuka')}${S.saranDariSimpanan ? ', hasil pencarian barusan' : ''}, perlu dicek di lapangan.</p>
+    <p class="muted" style="margin:0;font-size:12.5px">${ketSaran(penuhJenis.length, lingkup)} Sumber: ${esc(S.saranSumber || 'peta terbuka')}${S.saranDariSimpanan ? ', hasil pencarian barusan' : ''}, perlu dicek di lapangan.</p>
     <div class="saran-filter">${KELOMPOK_SARAN.map(g => {
-      const n = g.id === 'semua' ? semua.length : semua.filter(x => kelompokSaran(x) === g.id).length;
+      const n = g.id === 'semua' ? penuh.length : penuh.filter(x => kelompokSaran(x) === g.id).length;
       return n ? `<button type="button" data-jenis="${g.id}" aria-pressed="${jenisAktif === g.id}">${esc(g.label)} ${n}</button>` : '';
     }).join('')}</div>
-    <ul class="saran-list">${S.saran.map((x, i) => `<li>
-      <span class="isi"><b>${esc(x.nama)}</b><small>${esc([x.jenis, x.alamat].filter(Boolean).join(', '))} ${Math.round(x.jarak * 1000)} m</small></span>
+    <ul class="saran-list">${S.saran.slice(0, tampil).map((x, i) => `<li>
+      <span class="isi"><b>${esc(x.nama)}</b><small>${esc([labelJenis(x.jenis), x.alamat].filter(Boolean).join(', '))} ${Math.round(x.jarak * 1000)} m</small></span>
       <button type="button" class="btn btn-sm btn-line" data-saran="${i}">Tambah</button>
-    </li>`).join('')}</ul>`;
+    </li>`).join('')}</ul>
+    ${tampil < S.saran.length ? `<button type="button" class="btn btn-sm btn-line" id="saranLagi" style="width:100%;margin-top:8px">Tampilkan ${Math.min(SARAN_PER_HALAMAN, S.saran.length - tampil)} lagi (${tampil} dari ${S.saran.length} di daftar, semuanya sudah tampil di peta)</button>` : ''}`;
+}
+
+/** Kalimat jumlah hasil: jujur soal total, dan menyebut bila yang tampil adalah sampel merata. */
+function ketSaran(totalJenis, lingkup) {
+  const n = S.saran.length;
+  const sampel = n < totalJenis || S.saranSampelServer;
+  const total = S.saranSampelServer && S.saranTotalServer > totalJenis ? 'sekitar ' + fmtNum.format(S.saranTotalServer) : fmtNum.format(totalJenis);
+  return sampel
+    ? `${fmtNum.format(n)} dari ${total} tempat pada ${lingkup} yang belum ada di daftar prospek, dipilih merata di seluruh area supaya tepinya ikut terjangkau. Perkecil lingkaran di bagian yang padat untuk melihat semuanya.`
+    : `${fmtNum.format(n)} tempat pada ${lingkup} yang belum ada di daftar prospek.`;
 }
 
 function tawarkanPerluas(wilayah) {
@@ -4091,12 +4217,12 @@ function tampilkanGagalSekitar(pesan, catatan) {
       <p class="muted" style="font-size:11.5px;margin:6px 0 0;overflow-wrap:anywhere">${esc(rinci || 'tidak ada')}</p></details>`;
 }
 
-function tutupSaran() { S.saranSemua = []; S.saran = []; renderSaran(); }
+function tutupSaran() { S.saranSemua = []; S.saranPenuh = []; S.saran = []; renderSaran(); }
 
 function tambahDariSaran(i) {
   const x = (S.saran || [])[Number(i)];
   if (!x) return;
-  bukaFormProspek(null, { lat: x.lat, lng: x.lng, nama: x.nama, alamat: x.alamat, kategori: x.kategori, industri: x.jenis, sumber: 'Saran sekitar' });
+  bukaFormProspek(null, { lat: x.lat, lng: x.lng, nama: x.nama, alamat: x.alamat, kategori: x.kategori, industri: labelJenis(x.jenis), sumber: 'Saran sekitar' });
 }
 
 /* ================================================================
@@ -4533,7 +4659,8 @@ async function tampilkanStatusBank() {
     el.innerHTML = `
       <h3 style="margin:0 0 6px;font-size:13.5px">Bank data calon prospek</h3>
       <dl class="acc-meta" style="margin-top:0">
-        <dt>Tempat usaha tersimpan</dt><dd>${fmtNum.format(st.jumlah || 0)}</dd>
+        <dt>Bank data Jakarta</dt><dd>${labelBankJakarta(st.bank_jakarta)}</dd>
+        <dt>Tempat di sekitar cabang</dt><dd>${fmtNum.format(st.jumlah || 0)}</dd>
         <dt>Wilayah</dt><dd>radius ${teksRadius(st.wilayah ? st.wilayah.radius_m : 0)} dari titik cabang</dd>
         <dt>Kemajuan</dt><dd>${st.terakhir_selesai ? 'lengkap, diperbarui ' + esc(tglStr(st.terakhir_selesai)) : esc(st.petak_selesai + ' dari ' + st.petak_total + ' petak')}</dd>
         <dt>Jadwal otomatis</dt><dd>${st.jadwal_aktif ? 'aktif' : 'belum dipasang, jalankan pasangJadwalPanen di Apps Script'}</dd>
@@ -4629,7 +4756,7 @@ function gambarHasilAtas() {
       const t = TINGKAT_LOKASI[x.tingkat] || TINGKAT_LOKASI.jalan;
       return `<button type="button" class="q-item" data-q-lokasi="${i}"><b>${esc(x.nama || x.alamat || 'Lokasi')}</b>` +
         (x.alamat && x.alamat !== x.nama ? `<small>${esc(x.alamat)}</small>` : '') +
-        `<small style="color:${t.warna};font-weight:700">${esc(t.label)}${x.sumberCari === 'bank data' ? ', dari bank data' : ''}${isFinite(x.jarak) ? ' · ' + x.jarak.toFixed(1) + ' km' : ''}</small></button>`;
+        `<small style="color:${t.warna};font-weight:700">${esc(t.label)}${x.sumberCari === 'bank data' ? ', ' + labelSumberBank(x) : ''}${isFinite(x.jarak) ? ' · ' + x.jarak.toFixed(1) + ' km' : ''}</small></button>`;
     }).join('');
   }
   kotak.innerHTML = html;
@@ -4728,7 +4855,7 @@ function lipatPanel(id) {
  *  IMPOR TARGET (misalnya dari Cakra)
  * ================================================================ */
 const KOLOM_IMPOR = {
-  nama: /^(nama|nama usaha|nama nasabah|nama perusahaan|nama target|nama calon nasabah|perusahaan|debitur|company|target|nama badan usaha)$/i,
+  nama: /^(nama|nama usaha|nama nasabah|nama perusahaan|nama target|nama calon nasabah|perusahaan|debitur|company|target|nama badan usaha|nama merchant|merchant|nama toko|nama outlet|outlet|nama tempat|nama debitur|nama calon debitur|nama lead|lead|nama prospek|prospek)$/i,
   alamat: /^(alamat|alamat usaha|alamat lengkap|address|lokasi|alamat kantor)$/i,
   kategori: /^(kategori|segmen|segment|segmentasi)$/i,
   industri: /^(bidang usaha|industri|sektor|jenis usaha|sektor usaha|lini usaha)$/i,
@@ -4738,11 +4865,95 @@ const KOLOM_IMPOR = {
   kelurahan: /^(kelurahan|desa|kecamatan)$/i
 };
 // Kolom yang sengaja tidak dibaca karena berisi data pribadi atau rahasia bank.
-const KOLOM_DILARANG = /(rekening|cif|nik|ktp|npwp|hp|telepon|telp|phone|email|saldo|limit|plafon|tanggal lahir)/i;
+// Kolom lain yang bukan data pribadi disimpan di catatan, jadi daftar ini juga mencakup nama orang dan data diri.
+const KOLOM_DILARANG = /(rekening|cif|nik|ktp|npwp|hp|telepon|telp|phone|email|saldo|limit|plafon|tanggal lahir|tgl lahir|tempat lahir|ibu kandung|pemilik|owner|\bpic\b|kontak|contact|penanggung jawab|pengurus|direktur|komisaris|agama|kelamin|gender|umur|usia|status nikah|pernikahan|domisili|alamat rumah|alamat ktp|penghasilan|gaji|\bkk\b|kartu keluarga|paspor|passport|\bsim\b|whatsapp|\bwa\b)/i;
+// Kolom nomor urut tidak perlu disimpan.
+const KOLOM_NOMOR_URUT = /^(no|no\.|nomor|nomor urut|urut|#)$/i;
+// Kalau judul nama tidak persis dikenali, cari judul yang memuat kata ini (misalnya "Nama Merchant Aktif")...
+const POLA_NAMA_LONGGAR = /(merchant|usaha|toko|outlet|perusahaan|debitur|badan usaha|lead|prospek)/i;
+// ...tapi bukan nama orang.
+const BUKAN_NAMA_USAHA = /(pemilik|pic|kontak|petugas|pengelola|sales|marketing|relationship|\brm\b)/i;
+
+// Isian yang sebenarnya berarti kosong.
+const NILAI_KOSONG = /^(-+|–|—|n\/?a|#n\/a|null|none|tidak ada|belum ada|kosong)$/i;
+
+/** Kolom yang berisi titik lokasi: lat dan lng terpisah, koordinat dalam satu kolom, atau tautan Google Maps. */
+function deteksiKolomTitik(judul, isi) {
+  const k = {};
+  (judul || []).forEach((h, i) => {
+    const t = String(h || '').trim();
+    if (k.lat === undefined && /^(lat|latitude|lintang)$/i.test(t)) k.lat = i;
+    else if (k.lng === undefined && /^(lng|lon|long|longitude|bujur)$/i.test(t)) k.lng = i;
+    else if (k.koordinat === undefined && /(koordinat|coordinate|titik lokasi|lat\s*[,/]?\s*lo?ng)/i.test(t)) k.koordinat = i;
+    else if (k.tautan === undefined && /(link|tautan|url|google maps|gmaps|maps)/i.test(t)) k.tautan = i;
+  });
+  if (k.lat === undefined || k.lng === undefined) { delete k.lat; delete k.lng; }
+  // Tanpa judul yang jelas: kolom yang isinya tautan Google Maps
+  if (k.tautan === undefined && isi.length) {
+    const n = (isi[0] || []).length;
+    for (let i = 0; i < n; i++) {
+      const ada = isi.slice(0, 20).filter(r => ambilTautanMaps(r[i] || '')).length;
+      if (ada >= Math.min(3, isi.length)) { k.tautan = i; break; }
+    }
+  }
+  return k;
+}
+
+function titikDariBaris(r, k, iAlamat) {
+  let t = null;
+  if (k.lat !== undefined && k.lng !== undefined) {
+    const lat = Number(String(r[k.lat] || '').trim().replace(',', '.')), lng = Number(String(r[k.lng] || '').trim().replace(',', '.'));
+    if (String(r[k.lat] || '').trim() && isFinite(lat) && isFinite(lng)) t = { lat: lat, lng: lng };
+  }
+  if (!t && k.koordinat !== undefined) t = bacaKoordinat(r[k.koordinat] || '') || null;
+  if (!t && k.tautan !== undefined) { const u = ambilTautanMaps(r[k.tautan] || ''); if (u) t = koordinatDariUrl(u); }
+  // Tautan Google Maps di sel mana pun (misalnya di kolom Lokasi), lalu koordinat yang ditulis di kolom alamat
+  if (!t) { for (const sel of r) { const u = ambilTautanMaps(sel || ''); if (u) { t = koordinatDariUrl(u); if (t) break; } } }
+  if (!t && iAlamat !== undefined) t = bacaKoordinat(r[iAlamat] || '') || null;
+  if (t && isFinite(t.lat) && isFinite(t.lng) && t.lat >= -11 && t.lat <= 6 && t.lng >= 95 && t.lng <= 141) return { lat: t.lat, lng: t.lng };
+  return null;
+}
+
+/** Baris yang sudah membawa titik dari file tidak perlu dicari. Alamatnya dilengkapi dari bank data
+ *  kalau tempat bernama sama di bank data letaknya berdekatan (paling jauh 200 m). */
+function hasilDariTitik(item) {
+  let alamat = item.alamat || '';
+  const b = item.bank || {};
+  if (!alamat) {
+    const calon = [b.cocok].concat(b.pilihan || []).filter(c => c && (c.skor === undefined || c.skor >= 0.6) && c.alamat);
+    const dekat = calon.find(c => jarakKm(item.titik, { lat: Number(c.lat), lng: Number(c.lng) }) <= 0.2);
+    if (dekat) alamat = dekat.alamat;
+  }
+  const x = { nama: item.nama, alamat: alamat, lat: item.titik.lat, lng: item.titik.lng, tingkat: 'tepat', sumber: 'titik dari file', skor: 1 };
+  return { terbaik: x, kandidat: [x] };
+}
+
+/** Nama tanpa keterangan tambahan setelah tanda "|" (pola umum dari Google Maps), untuk pencarian ke peta terbuka. */
+function namaInti(n) {
+  const t = String(n || '');
+  return t.split('|')[0].trim() || t;
+}
+
+/** Kolom alamat yang isinya sama di hampir semua baris (misalnya nama area cabang) bukan alamat per target.
+ *  Kolom seperti itu hanya diabaikan untuk pencarian lokasi kalau tidak ada kolom alamat lain yang isinya beragam. */
+function kolomSeragam(isi, peta) {
+  const kolom = ['alamat', 'kelurahan', 'kota'].filter(k => peta[k] !== undefined);
+  if (isi.length < 5 || !kolom.length) return [];
+  const info = kolom.map(k => {
+    const nilai = isi.map(r => String(r[peta[k]] || '').trim().toLowerCase()).filter(Boolean);
+    const hit = new Map();
+    nilai.forEach(v => hit.set(v, (hit.get(v) || 0) + 1));
+    const puncak = hit.size ? Math.max(...hit.values()) : 0;
+    return { k: k, seragam: nilai.length >= 5 && puncak / nilai.length >= 0.8 };
+  });
+  if (info.some(x => !x.seragam)) return [];
+  return info.map(x => x.k);
+}
 const MAKS_IMPOR = 300;
 
 function uraiTabel(teks) {
-  const baris = String(teks || '').replace(/\r/g, '').split('\n').filter(x => x.trim());
+  // Tanda BOM di awal file CSV (dari Excel atau Python) dibuang supaya judul kolom pertama tetap dikenali.
+  const baris = String(teks || '').replace(/^\uFEFF/, '').replace(/\r/g, '').split('\n').filter(x => x.trim());
   if (!baris.length) return [];
   const contoh = baris[0];
   const pemisah = contoh.includes('\t') ? '\t' : (contoh.split(';').length > contoh.split(',').length ? ';' : ',');
@@ -4769,9 +4980,20 @@ function petakanKolom(barisPertama) {
     if (KOLOM_DILARANG.test(judul)) { diabaikan.push(judul); return; }
     Object.keys(KOLOM_IMPOR).forEach(k => { if (peta[k] === undefined && KOLOM_IMPOR[k].test(judul)) peta[k] = i; });
   });
+  if (peta.nama === undefined) {
+    const dipakai0 = new Set(Object.values(peta));
+    const cocok = (j, pola) => { const t = String(barisPertama[j] || '').trim(); return t && !dipakai0.has(j) && !KOLOM_DILARANG.test(t) && pola.test(t) && !BUKAN_NAMA_USAHA.test(t); };
+    let i = barisPertama.findIndex((h, j) => cocok(j, POLA_NAMA_LONGGAR));
+    if (i === -1) i = barisPertama.findIndex((h, j) => cocok(j, /nama/i));
+    if (i !== -1) peta.nama = i;
+  }
   const adaJudul = peta.nama !== undefined;
+  // Kolom lain yang bukan data pribadi (misalnya Kode Cabang, Area, Blue/Gold dari Cakra) disimpan di catatan.
+  const dipakai = new Set(Object.values(peta));
+  const lainnya = adaJudul ? barisPertama.map((h, i) => ({ i: i, judul: String(h || '').trim() }))
+    .filter(x => x.judul && !dipakai.has(x.i) && !KOLOM_DILARANG.test(x.judul) && !KOLOM_NOMOR_URUT.test(x.judul)) : [];
   if (!adaJudul) { peta.nama = 0; if (barisPertama.length > 1) peta.alamat = 1; }
-  return { peta: peta, adaJudul: adaJudul, diabaikan: diabaikan };
+  return { peta: peta, adaJudul: adaJudul, diabaikan: diabaikan, lainnya: lainnya };
 }
 
 function cocokKategori(t) {
@@ -4827,27 +5049,49 @@ async function bacaBerkasImpor(file) {
 function siapkanBarisImpor() {
   const tabel = uraiTabel($('#impTeks').value);
   if (!tabel.length) return { galat: 'Belum ada data. Tempel dari Excel atau pilih berkas.' };
-  const { peta, adaJudul, diabaikan } = petakanKolom(tabel[0]);
+  const { peta, adaJudul, diabaikan, lainnya } = petakanKolom(tabel[0]);
   const isi = adaJudul ? tabel.slice(1) : tabel;
+  const seragam = kolomSeragam(isi, peta);
+  const kolomTitik = deteksiKolomTitik(adaJudul ? tabel[0] : [], isi);
+  const dipakaiTitik = new Set(Object.values(kolomTitik));
+  const lainnyaAsli = lainnya;
+  const lainnyaDisimpan = lainnyaAsli.filter(x => !dipakaiTitik.has(x.i));
+  const judulKolom = k => adaJudul ? String(tabel[0][peta[k]] || k).trim() : ({ alamat: 'Alamat', kelurahan: 'Kelurahan', kota: 'Kota' }[k] || k);
   const ada = new Set(S.prospek.map(p => normalNama(p.nama)));
   const dilihat = new Set();
   const baris = [];
   isi.forEach(r => {
-    const ambil = k => peta[k] !== undefined ? String(r[peta[k]] || '').trim() : '';
+    const ambil = k => {
+      if (peta[k] === undefined) return '';
+      const v = String(r[peta[k]] || '').trim();
+      if (NILAI_KOSONG.test(v)) return '';
+      // Tautan Google Maps di kolom alamat dipakai sebagai titik, bukan disimpan sebagai teks alamat.
+      if (['alamat', 'kelurahan', 'kota'].includes(k) && ambilTautanMaps(v)) return v.replace(ambilTautanMaps(v), '').replace(/^[\s,;-]+|[\s,;-]+$/g, '');
+      return v;
+    };
     const nama = ambil('nama');
     if (!nama) return;
     const kunci = normalNama(nama);
-    const alamat = [ambil('alamat'), ambil('kelurahan'), ambil('kota')].filter(Boolean).join(', ');
+    const alamat = ['alamat', 'kelurahan', 'kota'].filter(k => !seragam.includes(k)).map(ambil).filter(Boolean).join(', ');
+    const ekstra = lainnyaDisimpan.map(x => ({ judul: x.judul, nilai: String(r[x.i] == null ? '' : r[x.i]).trim() }))
+      .filter(x => !NILAI_KOSONG.test(x.nilai))
+      .concat(seragam.map(k => ({ judul: judulKolom(k), nilai: ambil(k) })))
+      .filter(x => x.nilai).map(x => x.judul + ': ' + x.nilai).join('; ');
     baris.push({
       nama: nama, alamat: alamat, kategori: cocokKategori(ambil('kategori')), industri: ambil('industri'),
-      catatan: ambil('catatan'), estimasi_nilai: ambil('estimasi_nilai').replace(/[^\d]/g, ''),
+      catatan: [ambil('catatan'), ekstra ? 'Dari file impor: ' + ekstra : ''].filter(Boolean).join(' | '),
+      estimasi_nilai: ambil('estimasi_nilai').replace(/[^\d]/g, ''),
+      titik: titikDariBaris(r, kolomTitik, peta.alamat),
       sudahAda: ada.has(kunci) || dilihat.has(kunci), hasil: null, pilih: 0, ikut: true
     });
     dilihat.add(kunci);
   });
   if (!baris.length) return { galat: 'Kolom nama tidak ditemukan atau kosong.' };
   if (baris.length > MAKS_IMPOR) return { galat: 'Terlalu banyak baris (' + baris.length + '). Maksimal ' + MAKS_IMPOR + ' sekali impor.' };
-  return { baris: baris, diabaikan: diabaikan, adaJudul: adaJudul };
+  const namaKolomTitik = Object.values(kolomTitik).map(i => adaJudul ? String(tabel[0][i] || '').trim() : '').filter(Boolean);
+  return { baris: baris, diabaikan: diabaikan, adaJudul: adaJudul, lainnya: lainnyaDisimpan.map(x => x.judul),
+    kolomTitik: namaKolomTitik, jumlahTitik: baris.filter(x => x.titik).length,
+    seragam: seragam.map(judulKolom), kolomNama: adaJudul ? String(tabel[0][peta.nama] || '').trim() : '' };
 }
 
 async function cariLokasiImpor() {
@@ -4866,9 +5110,10 @@ async function cariLokasiImpor() {
 
   // 1. cocokkan semua nama dengan bank data dalam satu permintaan
   if (!S.demo && dicari.length) {
-    progres(0, 'Mencocokkan nama dengan bank data...');
+    progres(0, 'Mencocokkan nama dan alamat dengan bank data...');
     try {
-      const r = await api('cocokkanNama', { nama: dicari.map(x => x.nama) }, { batasMs: 60000 });
+      const r = await api('cocokkanNama', { nama: dicari.map(x => x.nama), alamat: dicari.map(x => x.alamat || ''),
+        acuan: { lat: CONFIG.PETA_AWAL.lat, lng: CONFIG.PETA_AWAL.lng } }, { batasMs: 90000 });
       (r.hasil || []).forEach((h, i) => { dicari[i].bank = h; });
     } catch (e) { /* lanjut tanpa bank data */ }
   }
@@ -4879,7 +5124,10 @@ async function cariLokasiImpor() {
   const pekerja = async () => {
     while (antrean.length) {
       const item = antrean.shift();
-      try { item.hasil = await cariLokasiCerdas(item); } catch (e) { item.hasil = { terbaik: null, kandidat: [] }; }
+      if (item.titik) item.hasil = hasilDariTitik(item);
+      else {
+        try { item.hasil = await cariLokasiCerdas(item); } catch (e) { item.hasil = { terbaik: null, kandidat: [] }; }
+      }
       if (!item.hasil.terbaik) item.ikut = false;
       selesai++;
       progres(selesai, 'Mencari lokasi ' + selesai + ' dari ' + dicari.length + '...');
@@ -4908,7 +5156,10 @@ function renderTabelImpor() {
     `<span style="color:${TINGKAT_LOKASI.jalan.warna}">${hitung.jalan} perkiraan jalan</span>, ` +
     `<span style="color:${TINGKAT_LOKASI.wilayah.warna}">${hitung.wilayah} perkiraan kelurahan</span>, ` +
     `${hitung.gagal} tidak ketemu, ${hitung.ada} sudah ada di daftar.` +
-    (d.diabaikan && d.diabaikan.length ? ` <span class="muted">Kolom diabaikan: ${esc(d.diabaikan.join(', '))}.</span>` : '');
+    (d.diabaikan && d.diabaikan.length ? ` <span class="muted">Kolom diabaikan: ${esc(d.diabaikan.join(', '))}.</span>` : '') +
+    (d.jumlahTitik ? ` <span class="muted">${d.jumlahTitik} target memakai titik langsung dari kolom ${esc((d.kolomTitik || []).join(', '))}.</span>` : '') +
+    (d.lainnya && d.lainnya.length ? ` <span class="muted">Disimpan di catatan: ${esc(d.lainnya.join(', '))}.</span>` : '') +
+    (d.seragam && d.seragam.length ? ` <span class="muted">Kolom ${esc(d.seragam.join(', '))} isinya sama di hampir semua baris, jadi tidak dipakai untuk mencari lokasi (tetap disimpan di catatan).</span>` : '');
   $('#impSimpan').textContent = 'Simpan ' + ikut + ' target';
   $('#impSimpan').disabled = !ikut;
   $('#impSalinGagal').hidden = !hitung.gagal;
@@ -5288,8 +5539,14 @@ function bindEvents() {
     const t = uraiTabel($('#impTeks').value);
     if (!t.length) { $('#impInfo').textContent = ''; return; }
     const m = petakanKolom(t[0]);
-    $('#impInfo').textContent = (m.adaJudul ? 'Baris judul dikenali. ' : 'Baris judul tidak dikenali, kolom pertama dianggap nama dan kolom kedua alamat. ') +
-      (m.adaJudul ? (t.length - 1) : t.length) + ' baris data.' + (m.diabaikan.length ? ' Kolom diabaikan: ' + m.diabaikan.join(', ') + '.' : '');
+    $('#impInfo').textContent = (m.adaJudul ? 'Baris judul dikenali, nama usaha diambil dari kolom "' + String(t[0][m.peta.nama] || '').trim() + '". '
+        : 'Baris judul tidak dikenali, kolom pertama dianggap nama dan kolom kedua alamat. ') +
+      (m.adaJudul ? (t.length - 1) : t.length) + ' baris data.' + (m.diabaikan.length ? ' Kolom diabaikan: ' + m.diabaikan.join(', ') + '.' : '') +
+      (() => { const kt = deteksiKolomTitik(m.adaJudul ? t[0] : [], m.adaJudul ? t.slice(1) : t); const iK = Object.values(kt);
+        return iK.length ? ' Titik lokasi diambil langsung dari kolom ' + iK.map(i => m.adaJudul ? '"' + String(t[0][i] || '').trim() + '"' : 'ke-' + (i + 1)).join(' dan ') + ', jadi tidak perlu dicari.' : ''; })() +
+      (m.lainnya && m.lainnya.length ? ' Disimpan di catatan: ' + m.lainnya.filter(x => !Object.values(deteksiKolomTitik(t[0], t.slice(1))).includes(x.i)).map(x => x.judul).join(', ') + '.' : '') +
+      (m.adaJudul && m.peta.alamat === undefined && m.peta.kota === undefined && m.peta.kelurahan === undefined
+        ? ' Tidak ada kolom alamat, jadi lokasi dicari dari nama usaha dan jarak ke cabang.' : '');
   }, 300));
   $('#impTabel').addEventListener('change', e => {
     const d = S.impor; if (!d) return;
@@ -5376,7 +5633,8 @@ function bindEvents() {
       return;
     }
     const j = e.target.closest('[data-jenis]');
-    if (j) { S.saranJenis = j.dataset.jenis; renderSaran(); return; }
+    if (j) { S.saranJenis = j.dataset.jenis; S.saranTampil = SARAN_PER_HALAMAN; renderSaran(); return; }
+    if (e.target.closest('#saranLagi')) { S.saranTampil = (S.saranTampil || SARAN_PER_HALAMAN) + SARAN_PER_HALAMAN; renderSaran(); return; }
     const b = e.target.closest('[data-saran]');
     if (b) tambahDariSaran(b.dataset.saran);
   });
