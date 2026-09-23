@@ -2682,9 +2682,77 @@ const TINGKAT_LOKASI = {
   wilayah: { label: 'Perkiraan di kelurahannya', warna: '#D24B45' }
 };
 
+/** Sama dengan rapikanHuruf_ di Code.gs: huruf beraksen jadi biasa ("Café" jadi "cafe"), apostrof dibuang. */
+function rapikanHuruf(t) {
+  return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/['\u2019`\u00b4]/g, '');
+}
+// Sama dengan KANON_KATA_ di Code.gs: ejaan berbeda untuk kata yang sama ditulis seragam.
+const KANON_KATA = { apotik: 'apotek', pharmacy: 'apotek', kafe: 'cafe', caffe: 'cafe', servis: 'service', svc: 'service',
+  selular: 'seluler', cellular: 'seluler', celluler: 'seluler', celular: 'seluler', seluller: 'seluler',
+  fotocopy: 'fotokopi', fotokopy: 'fotokopi', photocopy: 'fotokopi', potokopi: 'fotokopi', laundri: 'laundry', londri: 'laundry',
+  mesjid: 'masjid', clinic: 'klinik', optical: 'optik', optic: 'optik', electronic: 'elektronik', electronics: 'elektronik',
+  elektronika: 'elektronik', bakmie: 'bakmi', restaurant: 'restoran', restorant: 'restoran' };
 function tokenNama(t) {
-  return String(t || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/)
+  return rapikanHuruf(t).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/)
+    .map(x => KANON_KATA[x] || x)
     .filter(x => x && !KATA_UMUM_NAMA.includes(x));
+}
+// Sama dengan JENIS_KELOMPOK_ di Code.gs
+const JENIS_KELOMPOK = {
+  makan: ['warung', 'warteg', 'rm', 'restoran', 'resto', 'restaurant', 'makan', 'lesehan', 'kantin'],
+  kopi: ['kopi', 'cafe', 'kafe', 'coffee', 'caffe'], bakso: ['bakso'], mie: ['mie', 'bakmi', 'bakmie', 'ramen'], sate: ['sate'],
+  soto: ['soto'], martabak: ['martabak'], roti: ['roti', 'bakery', 'kue', 'cake', 'donat'],
+  apotek: ['apotek', 'apotik', 'pharmacy', 'farma', 'farmasi', 'obat'], klinik: ['klinik', 'clinic', 'dokter', 'praktek', 'praktik', 'bidan', 'dental', 'gigi'],
+  salon: ['salon', 'barbershop', 'barber', 'pangkas', 'spa'], butik: ['butik', 'boutique', 'fashion', 'konveksi', 'distro'],
+  bengkel: ['bengkel'], laundry: ['laundry', 'laundri', 'londri'], seluler: ['seluler', 'selular', 'cellular', 'celluler', 'ponsel', 'phone', 'hp', 'gadget'],
+  elektronik: ['elektronik', 'electronic', 'electronics'], bangunan: ['bangunan', 'material', 'tb', 'keramik'], toko: ['toko', 'store', 'shop', 'kelontong'],
+  hotel: ['hotel', 'penginapan', 'losmen', 'hostel', 'guesthouse', 'residence'], kost: ['kost', 'kos', 'kontrakan'],
+  sekolah: ['sekolah', 'sd', 'sdn', 'smp', 'smpn', 'sma', 'sman', 'smk', 'paud', 'tk', 'kampus', 'universitas', 'akademi', 'bimbel', 'kursus'],
+  bank: ['bank', 'atm', 'bpr'], ibadah: ['masjid', 'mesjid', 'musholla', 'mushola', 'musala', 'gereja', 'vihara', 'pura', 'klenteng'],
+  optik: ['optik', 'optical', 'optic'], cetak: ['percetakan', 'fotokopi', 'fotocopy', 'printing', 'sablon'], travel: ['travel', 'tour', 'tiket'],
+  ekspedisi: ['ekspedisi', 'express', 'cargo', 'kurir', 'logistik'], minimarket: ['minimarket', 'mart', 'swalayan', 'supermarket', 'grosir'],
+  rs: ['hospital', 'rs', 'rsu', 'rsia']
+};
+const JENIS_DAGANG = ['toko', 'bangunan', 'elektronik', 'seluler', 'minimarket', 'roti', 'optik', 'butik', 'apotek'];
+const KATA_JENIS = Object.values(JENIS_KELOMPOK).flat();
+const KATA_GENERIK = KATA_JENIS.concat(['center', 'centre', 'official', 'gallery', 'galeri', 'jaya', 'abadi', 'makmur', 'sentosa',
+  'sejahtera', 'indonesia', 'jakarta', 'group', 'grup', 'ayam', 'nasi', 'jus', 'juice', 'es', 'teh', 'motor', 'mobil', 'service', 'baru', 'raya']);
+function jenisNama(nama) {
+  const kata = rapikanHuruf(nama).replace(/[^a-z0-9]+/g, ' ').split(' ');
+  return Object.keys(JENIS_KELOMPOK).filter(g => JENIS_KELOMPOK[g].some(w => kata.includes(w)));
+}
+/** Sama dengan jenisBentrok_ di Code.gs: dua nama yang menyebut jenis usaha berbeda bukan tempat yang sama. */
+function jenisBentrok(a, b) {
+  const ja = jenisNama(a), jb = jenisNama(b);
+  if (!ja.length || !jb.length || ja.some(g => jb.includes(g))) return false;
+  const hanyaToko = j => j.length === 1 && j[0] === 'toko', dagang = j => j.every(g => JENIS_DAGANG.includes(g));
+  return !((hanyaToko(ja) && dagang(jb)) || (hanyaToko(jb) && dagang(ja)));
+}
+function adaKataKhas(t) { return t.some(k => k.length >= 3 && !/^\d+$/.test(k) && !KATA_GENERIK.includes(k)); }
+// Bentuk ejaan asli untuk setiap kata baku, supaya salah ketik "celllar" tetap dekat ke "cellular" walau sudah dibakukan jadi "seluler".
+const KANON_BALIK = Object.entries(KANON_KATA).reduce((o, [asal, baku]) => { (o[baku] = o[baku] || []).push(asal); return o; }, {});
+
+/** Untuk memutuskan "ini tempat yang sama": lebih ketat dari pencarian. Kata harus sama atau hanya salah ketik
+ *  sedikit; awalan tidak dihitung ("point" bukan "point2000"). */
+function cocokKataIdentitas(a, b) {
+  if (a === b) return true;
+  const pendek = Math.min(a.length, b.length), panjang = Math.max(a.length, b.length);
+  if (pendek < 5 || /\d/.test(a) || /\d/.test(b)) return false;
+  const maks = panjang >= 9 ? 2 : 1;
+  return panjang - pendek <= maks && cocokKataCari(a, b) && !(a.startsWith(b) || b.startsWith(a));
+}
+/** Skor "tempat yang sama" antara dua nama (0 sampai 1). Kata pertama kedua nama harus sejalan:
+ *  "Food District ITC Roxy Mas" bukan "ITC Roxy Mas" walau berbagi tiga kata. */
+function skorIdentitas(ta, tb) {
+  if (!ta.length || !tb.length) return 0;
+  let sama = 0;
+  const dipakai = new Set();
+  ta.forEach(x => { for (let i = 0; i < tb.length; i++) { if (!dipakai.has(i) && cocokKataIdentitas(x, tb[i])) { sama++; dipakai.add(i); break; } } });
+  const skor = 2 * sama / (ta.length + tb.length);
+  if (!cocokKataIdentitas(ta[0], tb[0])) return Math.min(skor, 0.45);
+  const [kecil, besar] = ta.length <= tb.length ? [ta, tb] : [tb, ta];
+  if (kecil.every(k => besar.some(y => cocokKataIdentitas(k, y))) && adaKataKhas(kecil)) return Math.max(skor, 0.85);
+  return skor;
 }
 
 /** Kemiripan dua nama usaha, 0 sampai 1. Sama persis dengan versi di Code.gs. */
@@ -2852,11 +2920,27 @@ async function cariLokasiCerdas(item) {
   const tambah = (x, tingkat, sumber, skor) => {
     if (!isFinite(x.lat) || !isFinite(x.lng)) return;
     if (jarakKm(cabang, x) > 40) return;                         // abaikan hasil dari kota lain
-    if (kandidat.some(y => jarakKm(y, x) < 0.03)) return;
-    kandidat.push(Object.assign({}, x, { tingkat: tingkat, sumber: sumber, skor: skor || 0 }));
+    const baru = Object.assign({}, x, { tingkat: tingkat, sumber: sumber, skor: skor || 0 });
+    const i = kandidat.findIndex(y => jarakKm(y, x) < 0.03);
+    if (i === -1) { kandidat.push(baru); return; }
+    // Titik yang hampir sama (misalnya beberapa usaha di satu gedung): simpan yang tingkatnya lebih tepat,
+    // atau yang skornya lebih tinggi (nama lebih cocok), bukan sekadar yang datang lebih dulu.
+    const urut = { tepat: 0, jalan: 1, wilayah: 2 };
+    const lama = kandidat[i];
+    if ((urut[tingkat] ?? 3) < (urut[lama.tingkat] ?? 3) || ((urut[tingkat] ?? 3) === (urut[lama.tingkat] ?? 3) && baru.skor > lama.skor)) kandidat[i] = baru;
   };
 
   // 1. bank data (sudah dicocokkan sekaligus untuk semua nama sebelum fungsi ini dipanggil)
+  // Pencarian interaktif (nama dan alamat ditempel di form atau kolom pencarian): tanya bank data dengan nama
+  // plus alamatnya, supaya gerai yang benar dipilih. Impor target sudah membawa hasil bank sendiri (item.bank).
+  if (!item.bank && item.nama && !S.demo && S.user && S.user.pin) {
+    try {
+      const acuan = S.map ? pusatPeta() : cabang;
+      const r = await api('cariNama', { q: (item.nama + ' ' + (item.alamat || '')).slice(0, 200), acuan: acuan, maks: 3 }, { batasMs: 45000 });
+      (r && r.hasil || []).filter(h => h.skor >= 0.72).forEach(h => tambah(Object.assign({}, h, { lat: Number(h.lat), lng: Number(h.lng), sumberData: h.sumber }),
+        'tepat', 'bank data', h.skor + (h.skor_alamat || 0) * 0.2));
+    } catch (e) { /* lanjut ke peta terbuka */ }
+  }
   if (item.bank && item.bank.cocok && item.bank.skor >= 0.72) {
     if (item.bank.ambigu && Array.isArray(item.bank.pilihan) && item.bank.pilihan.length > 1) {
       // Nama yang sama ada di beberapa tempat (misalnya gerai waralaba): semuanya ditawarkan sebagai pilihan,
@@ -2903,6 +2987,25 @@ async function cariLokasiCerdas(item) {
         if (pertama) { titikAlamat = pertama; tambah(pertama, tingkatDariTipe(pertama) === 'tepat' ? 'jalan' : tingkatDariTipe(pertama), 'alamat', 0.4 - i * 0.1); }
       }
     }
+  }
+
+  // 3b. alamat di bank data: nomor rumah sama berarti titik persis, kalau tidak diperkirakan dari nomor di sekitarnya
+  if (item.alamat && adaNamaJalan(item.alamat) && !S.demo && S.user && S.user.pin) {
+    try {
+      const r = await api('cariAlamat', { q: item.alamat, titik: titikAlamat ? { lat: titikAlamat.lat, lng: titikAlamat.lng } : null,
+        radius: titikAlamat && tingkatDariTipe(titikAlamat) === 'wilayah' ? 2500 : 1200, acuan: cabang, maks: 5 }, { batasMs: 45000 });
+      (r && r.hasil || []).forEach(h => {
+        const x = { nama: h.tingkat === 'tepat' ? h.nama : (item.nama || h.nama), alamat: h.tingkat === 'tepat' ? h.alamat : item.alamat,
+          lat: Number(h.lat), lng: Number(h.lng), sumberData: h.tingkat === 'tepat' ? 'alamat dan nomor cocok' : String(h.alamat || '').toLowerCase() };
+        if (h.tingkat === 'tepat') {
+          // Beberapa usaha bisa berada di alamat yang sama (satu gedung): yang namanya cocok diutamakan.
+          const sk = item.nama ? miripNama(namaInti(item.nama), h.nama) : 0;
+          tambah(x, 'tepat', 'alamat di bank data', sk >= 0.5 ? 1 + sk : 0.9);
+        } else {
+          tambah(x, 'jalan', 'perkiraan nomor rumah', 0.55);
+        }
+      });
+    } catch (e) { /* lanjut dengan hasil peta terbuka */ }
   }
 
   // 4. alamat ketemu tapi belum tepat: cari nama usahanya di sekitar titik alamat
@@ -3095,8 +3198,11 @@ async function cariTempat(q, signal) {
   const tugas = [];
   // 1. bank data (tab Tempat dan bank Jakarta Overture + OpenStreetMap): beberapa tempat bernama mirip,
   //    diurutkan server dari kemiripan nama, kata wilayah di kueri (misalnya "tanjung duren"), dan jarak dari tengah peta.
-  if (!S.demo && S.user && S.user.pin) {
-    tugas.push(api('cariNama', { q: q, acuan: c, maks: 6 }).then(r => {
+  if (adaNamaJalan(q)) {
+    tugas.push(cariAlamatBank(q).then(arr => arr.forEach(x => tambah(x, x.tingkat, 'bank data'))).catch(() => {}));
+  }
+  if (!S.demo && S.user && S.user.pin && !murniAlamat(q)) {
+    tugas.push(api('cariNama', { q: q, acuan: c, maks: 6 }, { batasMs: 45000 }).then(r => {
       (r && r.hasil || []).forEach((h, i) => tambah({ nama: h.nama, alamat: h.alamat, lat: Number(h.lat), lng: Number(h.lng),
         kunci: h.kunci, nilai: h.nilai, sumberData: h.sumber, urutBank: i }, 'tepat', 'bank data'));
     }).catch(() =>
@@ -3212,8 +3318,9 @@ async function jalankanPencarianTempat(q) {
     ]);
     if (token !== cariToken) return;
     const c0 = pusatPeta();
-    const dariCerdas = hasilCerdas ? hasilCerdas.kandidat.map(x => Object.assign({}, x, { sumberCari: x.sumber === 'bank data' ? 'bank data' : 'nama dan alamat', jarak: jarakKm(c0, x) })) : [];
-    let hasil = gabungHasil(dariCerdas, hasilBiasa).slice(0, 8);
+    const dariCerdas = hasilCerdas ? hasilCerdas.kandidat.map(x => Object.assign({}, x, { sumberCari: /bank data|nomor rumah/.test(x.sumber || '') ? 'bank data' : 'nama dan alamat', jarak: jarakKm(c0, x) })) : [];
+    const dariCalon = cariCalonLokal(pisah.nama || teksCari, 3).map(x => Object.assign({}, x, { tingkat: 'tepat', sumberCari: 'bank data', sumberData: 'calon prospek di peta', jarak: jarakKm(c0, x) }));
+    let hasil = gabungHasil(gabungHasil(dariCalon, dariCerdas), hasilBiasa).slice(0, 8);
     let disederhanakan = false;
     if (!hasil.length) {
       const ringkas = bersihkanAlamat(q);
@@ -3238,7 +3345,7 @@ async function jalankanPencarianTempat(q) {
       const t = TINGKAT_LOKASI[h.tingkat] || TINGKAT_LOKASI.jalan;
       return `<li><button type="button" data-hasil="${i}">
       <span class="sumber">${h.jarak < 100 ? h.jarak.toFixed(1) + ' km' : ''}</span>
-      <b>${esc(h.nama || h.alamat)}</b>${h.alamat ? `<small>${esc(h.alamat)}</small>` : ''}
+      <b>${esc(h.nama || h.alamat)}</b>${(jenisTampil(h) || h.alamat) ? `<small>${esc([jenisTampil(h), h.alamat].filter(Boolean).join(', '))}</small>` : ''}
       <small style="color:${t.warna};font-weight:700">${esc(t.label)}${h.sumberCari === 'bank data' ? ', ' + labelSumberBank(h) : ''}</small>
     </button></li>`; }).join('');
     ul.hidden = false;
@@ -3903,15 +4010,20 @@ const KELOMPOK_SARAN = [
   { id: 'semua', label: 'Semua' },
   { id: 'usaha', label: 'Toko dan kantor', kata: /shop|office|craft|warehouse|industrial|commercial|retail|company|marketplace|fuel|car|bank|laundry|works|money|post/i },
   { id: 'kesehatan', label: 'Kesehatan', kata: /pharmacy|clinic|doctor|dentist|dental|hospital|veterinary|health|medical|laborator|optic|physiotherap|midwife|maternity/i },
-  { id: 'institusi', label: 'Sekolah dan institusi', kata: /school|college|university|kindergarten|preschool|government|education|academy|place of learning|campus|tutor/i },
+  { id: 'institusi', label: 'Sekolah dan institusi', kata: /school|college|university|kindergarten|preschool|government|education|academy|place of learning|campus|tutor|worship|mosque|church|temple|masjid|gereja|vihara|community|social|townhall|embassy|police|library/i },
   { id: 'kuliner', label: 'Kuliner dan hotel', kata: /restaurant|cafe|fast food|fast_food|hotel|guest|motel|hostel|resort|bakery|\bbar\b|\bpub\b|food court|ice cream|eatery|coffee|\bfood\b|catering|dessert|juice|\btea\b|lodging|\binn\b|noodle|bistro|diner|steak|grill|seafood|sushi|ramen|pizza|burger|barbecue|bbq/i }
 ];
 function kelompokSaran(x) {
-  const t = String(x.jenis || '');
-  // Kelompok khusus dicek lebih dulu, supaya "health care" atau "food service" tidak jatuh ke Toko dan kantor.
-  const urut = ['kesehatan', 'institusi', 'kuliner', 'usaha'].map(id => KELOMPOK_SARAN.find(g => g.id === id));
-  const k = urut.find(g => g && g.kata.test(t));
-  return k ? k.id : 'usaha';
+  const t = String(x.jenis || '').replace(/_/g, ' ');
+  const g = id => KELOMPOK_SARAN.find(k => k.id === id);
+  // Urutan penting: kesehatan dan institusi dulu ("health care", "place of worship"), lalu kedai kopi,
+  // lalu toko ("food and beverage store" itu toko, bukan tempat makan), baru kuliner.
+  if (g('kesehatan').kata.test(t)) return 'kesehatan';
+  if (g('institusi').kata.test(t)) return 'institusi';
+  if (/coffee shop|tea house|juice bar/i.test(t)) return 'kuliner';
+  if (/\b(store|shop|supplier|distributor|wholesaler|retail|market|mart)\b/i.test(t)) return 'usaha';
+  if (g('kuliner').kata.test(t)) return 'kuliner';
+  return 'usaha';
 }
 
 /** Berapa titik calon prospek yang digambar di peta, dan berapa baris daftar per halaman. */
@@ -3973,11 +4085,138 @@ const LABEL_JENIS = {
   'barber': 'pangkas rambut', 'steakhouse': 'restoran steak', 'laboratory': 'laboratorium', 'veterinary': 'dokter hewan',
   'car wash': 'cuci mobil', 'car rental': 'rental mobil', 'money transfer': 'pengiriman uang', 'coworking space': 'ruang kerja bersama',
   'internet cafe': 'warnet', 'copyshop': 'fotokopi', 'tailor': 'penjahit', 'books': 'toko buku', 'stationery': 'alat tulis',
-  'healthcare': 'layanan kesehatan', 'yes': 'usaha'
+  'healthcare': 'layanan kesehatan', 'lodging': 'penginapan', 'private lodging': 'penginapan', 'hotel': 'hotel', 'bank': 'bank',
+  'bank or credit union': 'bank', 'laundry': 'laundry', 'supermarket': 'supermarket', 'bar': 'bar',
+  'muslim place of worship': 'masjid atau musala', 'christian place of worship': 'gereja', 'buddhist place of worship': 'vihara',
+  'hindu place of worship': 'pura', 'place of worship': 'tempat ibadah', 'arts crafts and hobby store': 'toko kerajinan dan hobi',
+  'dental clinic': 'klinik gigi', 'government': 'instansi pemerintah', 'government office': 'kantor pemerintah', 'park': 'taman',
+  'train station': 'stasiun', 'arcade': 'arena permainan', 'bicycle': 'toko sepeda', 'telecommunication': 'telekomunikasi',
+  'high school': 'SMA', 'elementary school': 'SD', 'middle school': 'SMP', 'college university': 'perguruan tinggi',
+  'arts and entertainment': 'hiburan', 'toys and games store': 'toko mainan', 'photo': 'studio foto', 'flowers and gifts store': 'toko bunga dan hadiah',
+  'social or community service': 'layanan sosial', 'electric utility provider': 'layanan listrik', 'electronics repair': 'servis elektronik',
+  'sporting goods store': 'toko perlengkapan olahraga', 'second hand store': 'toko barang bekas', 'campus building': 'gedung kampus',
+  'travel and transportation': 'transportasi', 'education': 'pendidikan', 'legal service': 'jasa hukum', 'auto dealer': 'dealer kendaraan',
+  'reproductive perinatal and womens care': 'klinik kandungan', 'complementary and alternative medicine': 'pengobatan alternatif', 'yes': 'usaha'
 };
 function labelJenis(j) {
   const k = String(j || '').toLowerCase().trim();
   return LABEL_JENIS[k] || String(j || '');
+}
+
+/** Cocok kata untuk pencarian: awalan sama (4 huruf ke atas) atau beda 1 huruf (2 huruf untuk kata 9 huruf ke atas).
+ *  Sama dengan cocokKataCari_ di Code.gs. */
+function cocokKataCari(a, b) {
+  if (a === b || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))) return true;
+  // Kata baku yang punya ejaan lain: salah ketik dibandingkan juga dengan ejaan-ejaan aslinya.
+  if (typeof KANON_BALIK !== 'undefined') {
+    if (KANON_BALIK[b] && KANON_BALIK[b].some(v => v !== b && cocokKataCariDasar(a, v))) return true;
+    if (KANON_BALIK[a] && KANON_BALIK[a].some(v => v !== a && cocokKataCariDasar(v, b))) return true;
+  }
+  return cocokKataCariDasar(a, b);
+}
+function cocokKataCariDasar(a, b) {
+  if (a === b || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))) return true;
+  const pendek = Math.min(a.length, b.length), panjang = Math.max(a.length, b.length);
+  if (pendek < 5 || /^\d+$/.test(a) || /^\d+$/.test(b)) return false;
+  const maks = panjang >= 9 ? 2 : 1;
+  if (panjang - pendek > maks) return false;
+  const d = [];
+  for (let i = 0; i <= a.length; i++) d[i] = [i];
+  for (let j = 0; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      let v = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, d[i - 2][j - 2] + 1);
+      d[i][j] = v;
+    }
+  }
+  return d[a.length][b.length] <= maks;
+}
+
+/** Skor nama untuk kolom pencarian, sama dengan skorNamaKueri_ di Code.gs: kueri boleh berisi nama plus wilayah. */
+function skorNamaCari(tq, tn) {
+  const dasar = skorNamaCariDasar(tq, tn);
+  if (dasar >= 0.85) return dasar;
+  // Kata yang ditulis terpisah atau disambung ("wizz mie" dan "wizzmie") dicoba digabung dulu.
+  // Kata gabungan harus sama persis atau hanya salah ketik sedikit, bukan sekadar berawalan sama ("roxy" + "mebel" bukan "roxy").
+  const cocokGabung = (a, b) => a === b || (Math.min(a.length, b.length) >= 5 && a.length !== b.length ? cocokKataCari(a, b) && !(a.startsWith(b) || b.startsWith(a)) : a.length === b.length && cocokKataCari(a, b));
+  const gabung = (a, b) => { const h = []; for (let i = 0; i < a.length; i++) { if (i + 1 < a.length && b.some(y => cocokGabung(a[i] + a[i + 1], y))) { h.push(a[i] + a[i + 1]); i++; } else h.push(a[i]); } return h; };
+  const tq2 = gabung(tq, tn), tn2 = gabung(tn, tq);
+  if (tq2.length === tq.length && tn2.length === tn.length) return dasar;
+  return Math.max(dasar, skorNamaCariDasar(tq2, tn2));
+}
+
+function skorNamaCariDasar(tq, tn) {
+  if (!tq.length || !tn.length) return 0;
+  let sama = 0;
+  const dipakai = new Set();
+  tq.forEach(x => { for (let i = 0; i < tn.length; i++) { if (!dipakai.has(i) && cocokKataCari(x, tn[i])) { sama++; dipakai.add(i); break; } } });
+  let skor = 2 * sama / (tq.length + tn.length);
+  const adaDi = (k, daftar) => daftar.some(y => cocokKataCari(k, y));
+  if (!adaDi(tq[0], tn) && !adaDi(tn[0], tq)) skor = Math.min(skor, 0.45);
+  // Sama dengan skorNamaKueriDasar_ di Code.gs: hanya untuk nama yang punya kata khas
+  if (skor < 0.9 && tn.every(k => tq.some(x => cocokKataCari(x, k))) && cocokKataCari(tq[0], tn[0]) && adaKataKhas(tn)) skor = Math.max(skor, 0.85);
+  // Kueri adalah bagian awal nama tempat
+  if (skor < 0.85 && tq.length <= tn.length && tq.every((k, i) => cocokKataCari(k, tn[i])) && adaKataKhas(tq)) skor = 0.85;
+  return skor;
+}
+
+/** Teks berisi nama jalan (misalnya salinan alamat Google Maps). */
+function adaNamaJalan(q) { return /\b(jl|jln|jalan|gg|gang)\b\.?/i.test(String(q || '')); }
+
+/** Teks yang seluruhnya alamat, tanpa nama usaha: pencarian nama dilewati supaya toko bernama "Grogol ..."
+ *  tidak ikut muncul sebagai hasil tepat. */
+function murniAlamat(q) {
+  const t = String(q || '').trim();
+  if (/^(jl|jln|jalan|gg|gang)\b/i.test(t)) return true;
+  const penanda = (t.match(/\b(jl|jln|jalan|gg|gang|no|nomor|rt|rw|kel|kec|kelurahan|kecamatan|kota|kabupaten|dki)\b/gi) || []).length;
+  return penanda >= 3 || (penanda >= 2 && /\b1[0-4]\d{3}\b/.test(t));
+}
+
+/** Titik perkiraan alamat dari peta terbuka, dipakai sebagai pusat pencarian alamat di bank data. */
+async function perkiraanTitikAlamat(alamat) {
+  const cabang = { lat: CONFIG.PETA_AWAL.lat, lng: CONFIG.PETA_AWAL.lng };
+  for (const v of variasiAlamat(alamat).slice(0, 3)) {
+    const h = await photonCari(v, cabang, 40, 5).catch(() => []);
+    const x = h.find(y => jarakKm(cabang, y) <= 40 && !terlaluUmum(y));
+    if (x) return { lat: x.lat, lng: x.lng, tingkat: tingkatDariTipe(x) };
+  }
+  return null;
+}
+
+/** Pencarian alamat di bank data: nomor sama berarti titik persis, kalau tidak diperkirakan dari nomor di sekitarnya. */
+async function cariAlamatBank(alamat) {
+  if (S.demo || !S.user || !S.user.pin || !adaNamaJalan(alamat)) return [];
+  const titik = await perkiraanTitikAlamat(alamat).catch(() => null);
+  const r = await api('cariAlamat', { q: alamat, titik: titik ? { lat: titik.lat, lng: titik.lng } : null,
+    radius: titik && titik.tingkat === 'wilayah' ? 2500 : 1200, acuan: S.map ? pusatPeta() : null, maks: 5 }, { batasMs: 45000 });
+  return (r && r.hasil || []).map((h, i) => h.tingkat === 'tepat'
+    ? { nama: h.nama, alamat: h.alamat, lat: Number(h.lat), lng: Number(h.lng), kunci: h.kunci, nilai: h.nilai, tingkat: 'tepat',
+        sumberData: 'alamat dan nomor cocok' + (h.sumber && h.sumber !== 'bank data' ? ', ' + h.sumber : ''), urutBank: i }
+    : { nama: h.nama, alamat: alamat, lat: Number(h.lat), lng: Number(h.lng), tingkat: 'jalan', sumberData: String(h.alamat || '').toLowerCase(), urutBank: i });
+}
+
+/** Pencarian instan di calon prospek yang sedang tampil di peta (hasil Cari calon prospek), tanpa ke server. */
+function cariCalonLokal(q, maks) {
+  const daftar = S.saranPenuh && S.saranPenuh.length ? S.saranPenuh : (S.saranSemua || []);
+  const tq = tokenNama(q);
+  if (!daftar.length || !tq.length) return [];
+  const c = pusatPeta();
+  const qNorm = normalNama(q);
+  const bonus = x => { const n = normalNama(x.nama); return (n === qNorm || n.startsWith(qNorm + ' ')) ? 0.12 : 0; };
+  return daftar.map(x => ({ x: x, skor: skorNamaCari(tq, tokenNama(x.nama)) }))
+    .filter(o => o.skor >= 0.6 && !jenisBentrok(q, o.x.nama))
+    .sort((a, b) => ((b.skor + bonus(b.x)) - (a.skor + bonus(a.x))) || (jarakKm(c, a.x) - jarakKm(c, b.x)))
+    .slice(0, maks || 5)
+    .map(o => o.x);
+}
+
+/** Jenis usaha untuk ditampilkan di hasil pencarian, dari jenis yang sudah ada atau dari tag peta. */
+function jenisTampil(x) {
+  if (!x) return '';
+  if (x.jenis) return labelJenis(x.jenis);
+  if (x.kunci) { const t = {}; t[x.kunci] = x.nilai; return labelJenis(jenisUsaha(t)); }
+  return '';
 }
 
 /** Label sumber untuk hasil pencarian dari bank data. */
@@ -3994,7 +4233,34 @@ function labelBankJakarta(b) {
     (b.indeks_nama ? ', pencarian nama aktif' : ', indeks nama belum ada');
 }
 
-function normalNama(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+function normalNama(x) { return rapikanHuruf(x).replace(/[^a-z0-9]+/g, ' ').trim(); }
+
+/** Membuang tempat yang sudah ada di daftar prospek. Satu tempat dianggap sama dengan prospek kalau:
+ *  namanya sangat mirip dan jaraknya paling jauh 150 m (titik prospek bisa sedikit meleset), atau
+ *  namanya cukup mirip dan jaraknya paling jauh 60 m, atau namanya persis sama dan jaraknya paling jauh 250 m.
+ *  Nama sama saja (gerai waralaba lain) atau letak dekat saja (toko sebelah) tidak cukup. */
+function saringProspekAda(hasil, prospek) {
+  const daftar = (prospek || []).map(p => {
+    const ll = typeof latlng === 'function' ? latlng(p) : null;
+    return ll ? { nama: p.nama, normal: normalNama(p.nama), token: tokenNama(p.nama), lat: ll[0], lng: ll[1] } : null;
+  }).filter(Boolean);
+  if (!daftar.length) return hasil.slice();
+  // Nama yang muncul lebih dari sekali di area ini (gerai waralaba) memakai batas jarak lebih rapat,
+  // karena gerai lain bisa berada seratus meter dari gerai yang sudah jadi prospek.
+  const jumlahNama = {};
+  hasil.forEach(x => { const k = normalNama(x.nama); jumlahNama[k] = (jumlahNama[k] || 0) + 1; });
+  return hasil.filter(x => {
+    const tx = tokenNama(x.nama), nx = normalNama(x.nama);
+    const waralaba = (jumlahNama[nx] || 0) > 1;
+    return !daftar.some(p => {
+      const d = jarakKm(p, x);
+      if (nx && nx === p.normal) return d <= (waralaba ? 0.08 : 0.25);
+      if (d > (waralaba ? 0.08 : 0.15) || jenisBentrok(p.nama, x.nama)) return false;
+      const sk = Math.max(skorIdentitas(p.token, tx), skorIdentitas(tx, p.token));
+      return sk >= 0.85 || (sk >= 0.6 && d <= 0.06);
+    });
+  });
+}
 
 async function cariSekitar(wilayah) {
   const pusat = wilayah.pusat;
@@ -4006,17 +4272,16 @@ async function cariSekitar(wilayah) {
     const mentah = jawaban.hasil || [];
     S.saranSumber = jawaban.sumber || 'peta terbuka';
     S.saranDariSimpanan = !!jawaban.dariSimpanan;
-    const adaNama = new Set(S.prospek.map(p => normalNama(p.nama)));
     const dipakai = [];
     const dalamWilayah = mentah
       .filter((x, i, arr) => arr.findIndex(y =>
         normalNama(y.nama) === normalNama(x.nama) && jarakKm(y, x) < 0.15) === i)
       .map(x => Object.assign(x, { jarak: jarakKm(pusat, x) }))
       .filter(x => wilayah.kotak || wilayah.poly || x.jarak * 1000 <= wilayah.radius + 50);
-    const hasil = dalamWilayah
+    // Tempat yang sudah jadi prospek disaring berdasarkan nama DAN letak: gerai waralaba lain atau toko
+    // di sebelah prospek (misalnya di mall yang sama) tetap tampil sebagai calon prospek.
+    const hasil = saringProspekAda(dalamWilayah, S.prospek)
       .filter(x => {
-        if (adaNama.has(normalNama(x.nama))) return false;
-        if (S.prospek.some(p => { const ll = latlng(p); return ll && jarakKm({ lat: ll[0], lng: ll[1] }, x) < 0.04; })) return false;
         if (dipakai.some(y => jarakKm(y, x) < 0.02 && normalNama(y.nama) === normalNama(x.nama))) return false;
         dipakai.push(x);
         return true;
@@ -4711,7 +4976,7 @@ async function cariLokasiUntukTeks(q) {
     pisah.nama && pisah.alamat ? cariLokasiCerdas({ nama: pisah.nama, alamat: pisah.alamat }).catch(() => null) : Promise.resolve(null)
   ]);
   const c0 = pusatPeta();
-  const dariCerdas = cerdas ? cerdas.kandidat.map(x => Object.assign({}, x, { sumberCari: x.sumber === 'bank data' ? 'bank data' : 'nama dan alamat', jarak: jarakKm(c0, x) })) : [];
+  const dariCerdas = cerdas ? cerdas.kandidat.map(x => Object.assign({}, x, { sumberCari: /bank data|nomor rumah/.test(x.sumber || '') ? 'bank data' : 'nama dan alamat', jarak: jarakKm(c0, x) })) : [];
   let hasil = gabungHasil(dariCerdas, biasa);
   if (!hasil.length) {
     const akhir = await cariLokasiCerdas({ nama: '', alamat: q }).catch(() => null);
@@ -4727,11 +4992,15 @@ async function cariDariKolomAtas(q, pilihPertama) {
   const nomor = ++cariAtasNomor;
   const kata = q.toLowerCase();
   const prospek = S.prospek.filter(p => [p.nama, p.alamat, p.catatan, p.petugas, p.industri].join(' ').toLowerCase().includes(kata)).slice(0, 4);
-  S.qHasil = { prospek: prospek, lokasi: null, teks: q };
+  // Calon prospek yang sedang tampil di peta dicari langsung di perangkat, jadi hasilnya muncul seketika.
+  const calon = cariCalonLokal(q, 5);
+  S.qHasil = { prospek: prospek, calon: calon, lokasi: null, teks: q };
   gambarHasilAtas();
   let lokasi = [];
   try { lokasi = await cariLokasiUntukTeks(q); } catch (e) { lokasi = []; }
   if (nomor !== cariAtasNomor) return;
+  // Lokasi yang sama dengan calon prospek di atasnya tidak ditampilkan dua kali.
+  lokasi = lokasi.filter(x => !(S.qHasil.calon || []).some(y => normalNama(y.nama) === normalNama(x.nama) && jarakKm(y, x) < 0.1));
   S.qHasil.lokasi = lokasi;
   if (pilihPertama && lokasi.length) { pilihLokasiAtas(lokasi[0]); return; }
   gambarHasilAtas();
@@ -4746,6 +5015,13 @@ function gambarHasilAtas() {
     html += '<p class="q-judul">Prospek tersimpan</p>' + h.prospek.map(p =>
       `<button type="button" class="q-item" data-q-prospek="${esc(p.id)}"><b>${esc(p.nama)}</b><small>${esc([p.status, p.alamat].filter(Boolean).join(', ') || '-')}</small></button>`).join('');
   }
+  if (h.calon && h.calon.length) {
+    const c0 = pusatPeta();
+    html += '<p class="q-judul">Calon prospek di peta</p>' + h.calon.map((x, i) =>
+      `<button type="button" class="q-item" data-q-calon="${i}"><b>${esc(x.nama)}</b>` +
+      `<small>${esc([jenisTampil(x), x.alamat].filter(Boolean).join(', ') || '-')}</small>` +
+      `<small style="color:${CONFIG_WARNA_SARAN};font-weight:700">Dari hasil Cari calon prospek · ${jarakKm(c0, x).toFixed(1)} km</small></button>`).join('');
+  }
   html += '<p class="q-judul">Lokasi di peta</p>';
   if (h.lokasi === null) {
     html += '<div class="q-memuat"><span class="putar" aria-hidden="true"></span>Mencari lokasi...</div>';
@@ -4754,8 +5030,10 @@ function gambarHasilAtas() {
   } else {
     html += h.lokasi.map((x, i) => {
       const t = TINGKAT_LOKASI[x.tingkat] || TINGKAT_LOKASI.jalan;
+      const jenisX = jenisTampil(x);
+      const ket = [jenisX, x.alamat && x.alamat !== x.nama ? x.alamat : ''].filter(Boolean).join(', ');
       return `<button type="button" class="q-item" data-q-lokasi="${i}"><b>${esc(x.nama || x.alamat || 'Lokasi')}</b>` +
-        (x.alamat && x.alamat !== x.nama ? `<small>${esc(x.alamat)}</small>` : '') +
+        (ket ? `<small>${esc(ket)}</small>` : '') +
         `<small style="color:${t.warna};font-weight:700">${esc(t.label)}${x.sumberCari === 'bank data' ? ', ' + labelSumberBank(x) : ''}${isFinite(x.jarak) ? ' · ' + x.jarak.toFixed(1) + ' km' : ''}</small></button>`;
     }).join('');
   }
@@ -4784,8 +5062,9 @@ function tandaiLokasiCari(x) {
   }).addTo(S.map);
   const t = TINGKAT_LOKASI[x.tingkat] || TINGKAT_LOKASI.jalan;
   S.penandaCari.bindPopup(`<div class="pop-cari"><b>${esc(x.nama || 'Lokasi pencarian')}</b>` +
+    (jenisTampil(x) ? `<small>${esc(jenisTampil(x))}</small>` : '') +
     (x.alamat && x.alamat !== x.nama ? `<small>${esc(x.alamat)}</small>` : '') +
-    `<small style="color:${t.warna};font-weight:700">${esc(t.label)}</small>
+    `<small style="color:${t.warna};font-weight:700">${esc(t.label)}${x.sumberData ? ', ' + esc(x.sumberData) : ''}</small>
     <div class="pop-aksi">
       <button type="button" class="btn btn-sm btn-gold" data-cari-tambah>Tambah sebagai prospek</button>
       <button type="button" class="btn btn-sm btn-line" data-cari-sekitar>Cari calon prospek di sekitar</button>
@@ -5440,6 +5719,12 @@ function bindEvents() {
       if (p) { bukaHalaman('map'); if (mqMobile.matches) setView('map'); setTimeout(() => pilih(String(p.id), { fly: true }), 60); }
       return;
     }
+    const bc = e.target.closest('[data-q-calon]');
+    if (bc && S.qHasil && S.qHasil.calon) {
+      const x = S.qHasil.calon[Number(bc.dataset.qCalon)];
+      if (x) pilihLokasiAtas(Object.assign({}, x, { tingkat: 'tepat', sumberCari: 'calon prospek' }));
+      return;
+    }
     const bl = e.target.closest('[data-q-lokasi]');
     if (bl && S.qHasil && S.qHasil.lokasi) pilihLokasiAtas(S.qHasil.lokasi[Number(bl.dataset.qLokasi)]);
   });
@@ -5457,7 +5742,13 @@ function bindEvents() {
     if (!x) return;
     if (e.target.closest('[data-cari-tambah]')) {
       const namaBiasa = x.nama && !/^(Koordinat|Titik dari)/.test(x.nama) ? x.nama : '';
-      bukaFormProspek(null, { lat: x.lat, lng: x.lng, nama: namaBiasa, alamat: x.alamat || '' });
+      const isian = { lat: x.lat, lng: x.lng, nama: namaBiasa, alamat: x.alamat || '' };
+      const jenisX = jenisTampil(x);
+      if (jenisX) isian.industri = jenisX;
+      const katX = x.kategori || (x.kunci ? tebakKategori({ [x.kunci]: x.nilai }) : '');
+      if (katX && katX !== 'Lainnya') isian.kategori = katX;
+      if (x.sumberCari === 'calon prospek' || x.sumberCari === 'bank data') isian.sumber = 'Saran sekitar';
+      bukaFormProspek(null, isian);
       if (!x.alamat) isiAlamatDariTitik(x.lat, x.lng);
     } else if (e.target.closest('[data-cari-sekitar]')) {
       S.map.closePopup();
