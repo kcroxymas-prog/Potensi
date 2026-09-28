@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#003D79">
-<title>Peta Prospek</title>
+<title>PROSPEK | Bank Mandiri</title>
+<meta name="description" content="PROSPEK: Peta Roxy untuk Optimalisasi Sebaran Potensi dan Eksekusi Kunjungan. Aplikasi pemetaan dan tindak lanjut calon nasabah Bank Mandiri.">
+<meta name="application-name" content="PROSPEK">
+<meta name="apple-mobile-web-app-title" content="PROSPEK">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2c-6 0-11 4.7-11 10.6C5 20.4 16 30 16 30s11-9.6 11-17.4C27 6.7 22 2 16 2z' fill='%23003D79'/%3E%3Ccircle cx='16' cy='12.5' r='4.5' fill='%23FFB700'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -547,6 +550,55 @@ table.pic td{font-variant-numeric:tabular-nums}
 .logo-teks{display:inline-flex;align-items:center;font-weight:800;font-size:19px;letter-spacing:-.02em;color:#003D79;line-height:1}
 .logo-teks::after{content:"";width:18px;height:6px;margin-left:5px;border-radius:3px;background:#FFB700;transform:skewX(-20deg)}
 .dlg-head .logo-teks{margin-bottom:10px;font-size:22px}
+/* Identitas PROSPEK: nama solusi berdampingan dengan logo dan warna Bank Mandiri */
+.brand-text .wordmark{letter-spacing:.09em;font-weight:800}
+dialog.dlg-login{width:min(900px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:hidden;border-radius:18px}
+dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 0,#003D79 42%,#00244A 100%)}
+.login-wrap{display:grid;grid-template-columns:1.08fr 1fr;min-height:460px;max-height:calc(100dvh - 24px)}
+.login-brand{position:relative;display:flex;flex-direction:column;gap:14px;padding:30px 30px 24px;color:#fff;background:linear-gradient(160deg,#003D79 0%,#00336A 58%,#00264F 100%);overflow:hidden}
+.login-brand::after{content:"";position:absolute;right:-56px;bottom:-56px;width:270px;height:270px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Ccircle cx='120' cy='120' r='92' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-dasharray='7 7'/%3E%3Ccircle cx='120' cy='120' r='4' fill='%23FFB700'/%3E%3Cpath d='M120 62c-12 0-22 9.6-22 21.5C98 99 120 120 120 120s22-21 22-36.5C142 71.6 132 62 120 62z' fill='%23FFFFFF'/%3E%3Cpath d='M58 128c-8 0-14 6.2-14 14C44 152 58 166 58 166s14-14 14-24c0-7.8-6-14-14-14z' fill='%23FFFFFF'/%3E%3Cpath d='M178 150c-8 0-14 6.2-14 14C164 174 178 188 178 188s14-14 14-24c0-7.8-6-14-14-14z' fill='%23FFB700'/%3E%3C/svg%3E") no-repeat center/contain;opacity:.16;pointer-events:none}
+.login-logo{align-self:flex-start;display:inline-flex;align-items:center;padding:9px 13px;border-radius:10px;background:#fff;line-height:0}
+.login-logo img{display:block;height:24px;width:auto}
+.login-logo .logo-teks{font-size:21px}
+.login-wm{margin-top:10px;font-size:44px;font-weight:800;letter-spacing:.09em;line-height:1}
+.login-wm::after{content:"";display:block;width:56px;height:5px;margin-top:12px;border-radius:3px;background:var(--gold);transform:skewX(-20deg)}
+.login-akronim{margin:0;max-width:34ch;font-size:14px;line-height:1.6;color:rgba(255,255,255,.82)}
+.login-akronim b{color:var(--gold);font-weight:800}
+.login-tagline{margin:2px 0 0;max-width:32ch;font-size:16px;font-weight:600;line-height:1.45}
+.login-alur{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 0;padding:0}
+.login-alur li{display:flex;align-items:center;gap:7px;padding:6px 11px 6px 7px;border-radius:999px;background:rgba(255,255,255,.1);font-size:12.5px;font-weight:600}
+.login-alur span{display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:11px;font-weight:800}
+.login-kaki{margin:auto 0 0;font-size:12px;color:rgba(255,255,255,.66)}
+.dlg-login form{justify-content:center;background:#fff}
+.dlg-login .dlg-head{padding:30px 28px 6px;border-bottom:0}
+.dlg-login .dlg-head h2{font-size:22px}
+.dlg-login .dlg-body{padding:8px 28px 10px}
+.dlg-login .dlg-body input{padding:11px 12px;font-size:15px}
+.dlg-login .dlg-foot{padding:10px 28px 30px;border-top:0;background:#fff}
+.dlg-login .dlg-foot .btn{width:100%;justify-content:center;padding:12px 16px;font-size:15px}
+@media (max-width:720px){
+  /* Di HP layar masuk tampil penuh: panel merek di atas, formulir di bawah */
+  dialog.dlg-login{width:100%;max-width:100%;height:100dvh;max-height:100dvh;border-radius:0}
+  .login-wrap{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:100%;min-height:0;max-height:none;overflow:auto}
+  .login-brand{gap:10px;padding:calc(22px + env(safe-area-inset-top, 0px)) 22px 22px}
+  .login-wm{margin-top:8px;font-size:34px}
+  .login-wm::after{width:44px;height:4px;margin-top:9px}
+  .login-akronim{font-size:13px}
+  .login-tagline{font-size:14.5px}
+  .login-alur li{font-size:12px;padding:5px 10px 5px 6px}
+  .login-kaki{display:none}
+  .login-brand::after{width:190px;height:190px;right:-46px;bottom:-56px}
+  .dlg-login form{justify-content:flex-start}
+  .dlg-login .dlg-head{padding:24px 22px 4px}
+  .dlg-login .dlg-body{flex:0 0 auto;padding:6px 22px 8px}
+  .dlg-login .dlg-foot{flex:0 0 auto;padding:10px 22px calc(24px + env(safe-area-inset-bottom, 0px))}
+}
+.tentang-prospek{margin:14px 0 4px;padding:14px 16px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#003D79,#00336A)}
+.tp-wm{margin:0;font-size:18px;font-weight:800;letter-spacing:.09em}
+.tp-akronim{margin:4px 0 8px;font-size:13px;line-height:1.55;color:rgba(255,255,255,.82)}
+.tp-akronim b{color:var(--gold);font-weight:800}
+.tp-isi{margin:0;font-size:13px;line-height:1.55}
+.tp-isi b{color:var(--gold)}
 </style>
 </head>
 <body class="view-map">
@@ -554,7 +606,7 @@ table.pic td{font-variant-numeric:tabular-nums}
   <header class="topbar">
     <div class="brand">
       <span class="logo"><img src="logo-mandiri.png" alt="Bank Mandiri" onerror="this.outerHTML='<span class=&quot;logo-teks&quot;>mandiri</span>'" width="227" height="66"></span>
-      <div class="brand-text"><b>Peta Prospek</b><small id="brandSub"></small></div>
+      <div class="brand-text" title="PROSPEK: Peta Roxy untuk Optimalisasi Sebaran Potensi dan Eksekusi Kunjungan"><b class="wordmark">PROSPEK</b><small id="brandSub"></small></div>
     </div>
     <nav class="topnav" aria-label="Halaman">
       <button type="button" data-page="home" aria-current="page">Beranda</button>
@@ -839,9 +891,18 @@ table.pic td{font-variant-numeric:tabular-nums}
 </dialog>
 
 <!-- Masuk -->
-<dialog class="dlg dlg-sm" id="dlgLogin" aria-labelledby="dlTitle">
+<dialog class="dlg dlg-login" id="dlgLogin" aria-labelledby="dlTitle">
+  <div class="login-wrap">
+  <aside class="login-brand">
+    <span class="login-logo"><img src="logo-mandiri.png" alt="Bank Mandiri" onerror="this.outerHTML='<span class=&quot;logo-teks&quot;>mandiri</span>'" width="227" height="66"></span>
+    <div class="login-wm">PROSPEK</div>
+    <p class="login-akronim"><b>P</b>eta <b>R</b>oxy untuk <b>O</b>ptimalisasi <b>S</b>ebaran <b>P</b>otensi dan <b>E</b>ksekusi <b>K</b>unjungan</p>
+    <p class="login-tagline">Temukan, tambahkan, dan tindak lanjuti calon nasabah dalam satu peta.</p>
+    <ol class="login-alur"><li><span>1</span>Temukan</li><li><span>2</span>Tambahkan</li><li><span>3</span>Tindak lanjuti</li></ol>
+    <p class="login-kaki">Bank Mandiri <span id="loginCabang"></span></p>
+  </aside>
   <form id="formLogin" novalidate>
-    <header class="dlg-head"><div><img class="logo-plain" src="logo-mandiri.png" alt="Bank Mandiri" onerror="this.outerHTML='<span class=&quot;logo-teks&quot;>mandiri</span>'" width="227" height="66"><h2 id="dlTitle">Masuk ke Peta Prospek</h2><p>Gunakan kode akses dari admin aplikasi.</p></div></header>
+    <header class="dlg-head"><div><h2 id="dlTitle">Masuk ke PROSPEK</h2><p>Gunakan nama Anda dan kode akses dari admin aplikasi.</p></div></header>
     <div class="dlg-body">
       <fieldset>
         <label class="fld full"><span>Nama Anda</span><input name="nama" maxlength="80" autocomplete="name" placeholder="Nama yang tercatat di setiap perubahan"></label>
@@ -852,6 +913,7 @@ table.pic td{font-variant-numeric:tabular-nums}
     </div>
     <footer class="dlg-foot"><button type="submit" class="btn btn-ink" id="dlSubmit">Masuk</button></footer>
   </form>
+  </div>
 </dialog>
 
 <!-- Akun -->
@@ -941,10 +1003,15 @@ table.pic td{font-variant-numeric:tabular-nums}
 <dialog class="dlg" id="dlgBantuan" aria-labelledby="dbTitle">
   <form method="dialog">
     <header class="dlg-head">
-      <div><h2 id="dbTitle">Cara pakai</h2><p>Tiga menit membaca, cukup untuk mulai.</p></div>
+      <div><h2 id="dbTitle">Cara pakai PROSPEK</h2><p>Tiga menit membaca, cukup untuk mulai.</p></div>
       <button type="submit" class="icon-btn" aria-label="Tutup"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="dlg-body">
+      <section class="tentang-prospek" aria-label="Tentang PROSPEK">
+        <p class="tp-wm">PROSPEK</p>
+        <p class="tp-akronim"><b>P</b>eta <b>R</b>oxy untuk <b>O</b>ptimalisasi <b>S</b>ebaran <b>P</b>otensi dan <b>E</b>ksekusi <b>K</b>unjungan</p>
+        <p class="tp-isi">Satu peta untuk seluruh perjalanan calon nasabah di wilayah cabang: <b>temukan</b> potensi yang tersebar di sekitar cabang, <b>tambahkan</b> menjadi prospek, lalu <b>tindak lanjuti</b> sampai kunjungannya terlaksana.</p>
+      </section>
       <ol class="bantuan-langkah">
         <li><b>Tambah prospek</b><span>Tekan tombol kuning Tambah prospek. Isi nama dan kategori, lalu tentukan lokasinya. Kolom lokasi menerima nama tempat, alamat, koordinat yang disalin dari Google Maps, tautan Google Maps, atau Plus Code.</span></li>
         <li><b>Tetapkan siapa yang memegang</b><span>Pilih PIC di form. Daftar orangnya diatur lewat Beranda, tombol Kelola tim. Satu prospek boleh dipegang beberapa orang, atau ditandai Semua tim.</span></li>
@@ -5678,7 +5745,7 @@ function unduhCsv() {
   const blob = new Blob(['\ufeff' + kolom.join(',') + '\r\n' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'peta-prospek-' + hariIni() + '.csv';
+  a.download = 'prospek-' + hariIni() + '.csv';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   toast(data.length + ' prospek diunduh');
@@ -6159,6 +6226,8 @@ function bindEvents() {
  * ================================================================ */
 function init() {
   $('#brandSub').textContent = CONFIG.NAMA_CABANG;
+  if ($('#loginCabang')) $('#loginCabang').textContent = '| ' + CONFIG.NAMA_CABANG;
+  document.title = 'PROSPEK | Bank Mandiri ' + CONFIG.NAMA_CABANG;
   const u = store.get(KEY.user, null);
   S.user = { nama: (u && u.nama) || '', pin: (u && u.pin) || '' };
   S.sort = store.get(KEY.sort, 'update');
