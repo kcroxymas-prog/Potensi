@@ -599,6 +599,67 @@ dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 
 .tp-akronim b{color:var(--gold);font-weight:800}
 .tp-isi{margin:0;font-size:13px;line-height:1.55}
 .tp-isi b{color:var(--gold)}
+/* Kartu calon prospek di peta */
+.pop-saran-wrap .leaflet-popup-content-wrapper{padding:1px;border-radius:12px;box-shadow:0 10px 28px rgba(0,37,77,.24)}
+.pop-saran-wrap .leaflet-popup-content{margin:14px 16px 12px;font-family:var(--font);color:var(--ink);line-height:1.4}
+.pop-saran{display:flex;flex-direction:column;gap:3px}
+.ps-label{align-self:flex-start;margin-bottom:5px;padding:2px 9px;border-radius:999px;background:#FFF3D1;color:#8A5A00;font-size:11px;font-weight:700;letter-spacing:.02em}
+.ps-label-ok{background:#E2F3E9;color:#1E6B45}
+.ps-nama{padding-right:14px;font-size:15px;font-weight:800;line-height:1.3}
+.ps-jenis{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.ps-alamat,.ps-jarak{font-size:12.5px;color:var(--muted)}
+.ps-aksi{display:flex;gap:8px;margin-top:10px}
+.ps-aksi .btn{flex:1;justify-content:center;white-space:nowrap}
+.pop-saran p.ps-catatan{margin:7px 0 0;font-size:11.5px;line-height:1.4;color:var(--muted)}
+.pop-saran p.ps-error{margin:6px 0 0;font-size:12px}
+.ps-gmaps{margin-top:6px;font-size:12px;font-weight:600;color:var(--focus)}
+.ps-pilih{display:flex;flex-direction:column;gap:2px;max-height:250px;margin:0 -6px;padding:0;overflow:auto;list-style:none}
+.ps-pilih button{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:7px 8px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.ps-pilih button:hover,.ps-pilih button:focus-visible{background:var(--soft)}
+.ps-pilih b{font-size:13.5px;font-weight:700;line-height:1.3}
+.ps-pilih small{font-size:12px;color:var(--muted)}
+.saran-list .isi[data-lihat-saran]{cursor:pointer}
+/* Tugas visit */
+.tugas-card .card-head{gap:10px}
+.tg-ringkas{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+.tg-chip{display:inline-flex;align-items:baseline;gap:4px;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--ink-2);font-size:12.5px}
+.tg-chip b{font-size:14px;color:var(--ink)}
+.tg-chip.terlambat{background:#FDECEC;color:#9B1C1C}.tg-chip.terlambat b{color:#9B1C1C}
+.tg-chip.hariini{background:#FFF3D1;color:#8A5A00}.tg-chip.hariini b{color:#8A5A00}
+.tg-chip.selesai{background:#E2F3E9;color:#1E6B45}.tg-chip.selesai b{color:#1E6B45}
+.tugas-list{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
+.tg-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line-2)}
+.tg-item:first-child{border-top:0}
+.tg-isi{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tg-nama{padding:0;border:0;background:none;color:var(--ink);font:inherit;font-weight:700;text-align:left;cursor:pointer}
+button.tg-nama:hover,button.tg-nama:focus-visible{text-decoration:underline}
+.tg-isi small{font-size:12.5px;line-height:1.45;color:var(--muted)}
+.tg-isi small.tg-catatan{color:var(--ink-2)}
+.tg-tgl{font-weight:700;color:var(--ink-2)}
+.tg-tgl.terlambat{color:#B42318}.tg-tgl.hariini{color:#8A5A00}.tg-tgl.selesai{color:#1E6B45}.tg-tgl.batal{color:var(--muted);text-decoration:line-through}
+.tg-aksi{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.tg-batal{font-size:12px;color:#B42318}
+.tg-sub{margin:14px 0 2px;font-size:13px;color:#B42318}
+.tg-riwayat{margin-top:6px}
+.tg-riwayat summary{font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.d-sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.d-sec-head h3{margin-bottom:6px}
+.dg-cari,.dg-prospek,.dg-jumlah{grid-column:1/-1}
+.dg-cari{width:100%;margin-bottom:8px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit}
+.dg-prospek{max-height:250px;margin:0;padding:0;overflow:auto;list-style:none;border:1px solid var(--line-2);border-radius:10px}
+.dg-prospek li{border-top:1px solid var(--line-2)}
+.dg-prospek li:first-child{border-top:0}
+.dg-prospek label{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;cursor:pointer}
+.dg-prospek label:hover{background:var(--soft)}
+.dg-prospek input{flex-shrink:0;margin-top:3px}
+.dg-prospek span{display:flex;flex-direction:column;gap:1px;min-width:0}
+.dg-prospek small{font-size:12px;color:var(--muted)}
+.dg-sudah{display:block;font-style:normal;color:#8A5A00}
+.dg-kosong{padding:10px 12px}
+.dg-jumlah{margin:6px 0 0;font-size:12.5px}
+.tim-list li.tim-grup{padding:12px 2px 4px;border-top:0;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.peran-leader{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#FFF3D1;color:#8A5A00;font-size:11px;font-weight:700;vertical-align:middle}
+.saran-list .isi[data-lihat-saran]:hover b,.saran-list .isi[data-lihat-saran]:focus-visible b{text-decoration:underline}
 </style>
 </head>
 <body class="view-map">
@@ -658,7 +719,9 @@ dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 
         </div>
       </header>
       <div id="homeJoin"></div>
+      <section class="card tugas-card" id="cardTugasSaya" hidden></section>
       <section class="card aksi-hari" id="cardAksi"></section>
+      <section class="card tugas-card" id="cardTugasTim" hidden></section>
       <div class="figures" id="homeFigures"></div>
       <section class="card">
         <div class="card-head"><h2>Garap dulu yang ini</h2><button type="button" class="linkbtn" id="homeStale">Lihat semua di peta</button></div>
@@ -925,7 +988,8 @@ dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 
     </header>
     <div class="dlg-body">
       <div class="name-row">
-        <label class="fld"><span>Nama Anda</span><input name="nama" maxlength="80"></label>
+        <label class="fld"><span>Nama Anda</span><input name="nama" maxlength="80" list="dlNamaAnggota" autocomplete="off"></label>
+        <datalist id="dlNamaAnggota"></datalist>
         <button type="submit" class="btn btn-line">Simpan nama</button>
       </div>
       <dl class="acc-meta" id="dkMeta"></dl>
@@ -1037,10 +1101,44 @@ dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 
 </dialog>
 
 <!-- Kelola tim -->
+<dialog class="dlg" id="dlgTugas" aria-labelledby="dgTitle">
+  <form id="formTugas" novalidate>
+    <header class="dlg-head">
+      <div><h2 id="dgTitle">Tugaskan visit</h2><p id="dgSub">Pilih prospek, siapa yang berkunjung, dan kapan.</p></div>
+      <button type="button" class="icon-btn" data-close aria-label="Tutup"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </header>
+    <div class="dlg-body">
+      <fieldset>
+        <legend>Prospek yang dikunjungi</legend>
+        <input type="search" id="dgCari" class="dg-cari" placeholder="Cari nama atau alamat prospek" autocomplete="off" aria-label="Cari prospek">
+        <ul class="dg-prospek" id="dgProspek"></ul>
+        <p class="muted dg-jumlah" id="dgJumlah"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Penugasan</legend>
+        <label class="fld"><span>Ditugaskan ke <em>wajib</em></span><select name="ditugaskan_ke"></select></label>
+        <label class="fld"><span>Tanggal kunjungan <em>wajib</em></span><input type="date" name="tanggal"></label>
+        <div class="fld full"><span>Tujuan kunjungan</span>
+          <div class="seg" role="radiogroup" aria-label="Tujuan kunjungan">
+            <label><input type="radio" name="tujuan" value="Approach" checked><span><b>Approach</b><small>Membuka peluang dengan calon nasabah</small></span></label>
+            <label><input type="radio" name="tujuan" value="Maintain"><span><b>Maintain</b><small>Menjaga hubungan dengan nasabah yang sudah ada</small></span></label>
+          </div>
+        </div>
+        <label class="fld full"><span>Catatan untuk yang ditugaskan</span><textarea name="catatan" rows="3" maxlength="500" placeholder="Contoh: temui pemilik, tawarkan KUR dan QRIS"></textarea></label>
+      </fieldset>
+      <p class="form-error" id="dgError" role="alert" hidden></p>
+    </div>
+    <footer class="dlg-foot">
+      <button type="button" class="btn btn-line" data-close>Batal</button>
+      <button type="submit" class="btn btn-ink" id="dgSubmit">Tugaskan</button>
+    </footer>
+  </form>
+</dialog>
+
 <dialog class="dlg" id="dlgTim" aria-labelledby="dtTitle">
   <form id="formTim" novalidate>
     <header class="dlg-head">
-      <div><h2 id="dtTitle">Kelola tim</h2><p>Anggota tim bisa dipilih sebagai PIC pemegang prospek.</p></div>
+      <div><h2 id="dtTitle">Kelola tim</h2><p>Atur anggota, tim, dan Leader. Leader bisa menugaskan visit ke anggota mana pun.</p></div>
       <button type="button" class="icon-btn" data-close aria-label="Tutup"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="dlg-body">
@@ -1048,6 +1146,9 @@ dialog.dlg-login::backdrop{background:radial-gradient(circle at 18% 12%,#0B57A3 
         <legend id="dtFormTitle">Tambah anggota</legend>
         <label class="fld"><span>Nama <em>wajib</em></span><input name="nama" maxlength="80" autocomplete="off"></label>
         <label class="fld"><span>Jabatan</span><input name="jabatan" maxlength="80" placeholder="Contoh: RM, MT, CS"></label>
+        <label class="fld"><span>Tim</span><input name="tim" maxlength="40" list="dlNamaTim" placeholder="Contoh: Tim A, Tim Funding" autocomplete="off"></label>
+        <label class="fld"><span>Peran</span><select name="peran"><option value="Anggota">Anggota</option><option value="Leader">Leader (bisa menugaskan visit)</option></select></label>
+        <datalist id="dlNamaTim"></datalist>
         <div class="fld full"><span>Warna penanda</span><div class="swatches" id="dtSwatches"></div></div>
         <div class="full tim-actions">
           <button type="submit" class="btn btn-ink" id="dtSubmit">Tambah ke tim</button>
@@ -1246,7 +1347,9 @@ const SENTUHAN = {
   selesai:{ id: 'selesai',label: 'Tidak berlanjut (ditunda atau gagal)', pendek: 'Tidak berlanjut', warna: '#AEB8C3', teks: '#1B2A3A' }
 };
 const URUTAN_SENTUHAN = ['belum', 'lama', 'dingin', 'segar', 'selesai'];
-const PROSPEK_FIELDS = ['nama', 'hubungan', 'kategori', 'industri', 'alamat', 'lat', 'lng', 'pic', 'status', 'potensi', 'estimasi_nilai', 'produk', 'petugas', 'catatan'];
+const PERAN_TIM = ['Anggota', 'Leader'];
+const JENIS_TUGAS = ['Approach', 'Maintain'];
+const PROSPEK_FIELDS = ['nama', 'hubungan', 'kategori', 'industri', 'alamat', 'lat', 'lng', 'pic', 'status', 'alasan', 'sumber', 'potensi', 'estimasi_nilai', 'produk', 'petugas', 'catatan'];
 const AKT_FIELDS = ['prospek_id', 'tanggal', 'jenis', 'metode', 'catatan', 'status_setelah', 'petugas'];
 const RANK_POTENSI = { Tinggi: 0, Sedang: 1, Rendah: 2 };
 const mqMobile = window.matchMedia('(max-width: 820px)');
@@ -1256,7 +1359,7 @@ const S = {
   demo: !String(CONFIG.API_URL || '').trim(),
   user: { nama: '', pin: '' },
   prospek: [], aktivitas: [], byId: new Map(), stat: new Map(),
-  tim: [], timByNama: new Map(),
+  tim: [], timByNama: new Map(), tugas: [],
   page: 'home', warnaMode: 'status', petaPromise: null, leafletPromise: null,
   filter: { lingkaran: null, status: new Set(), prioritas: new Set(), sentuhan: new Set(), kategori: new Set(), hubungan: new Set(), potensi: new Set(), produk: new Set(), petugas: new Set(), saya: false, area: false },
   q: '', sort: 'update', view: 'map',
@@ -1327,6 +1430,209 @@ function ukuranPotensi(p) { return p === 'Tinggi' ? 50 : p === 'Rendah' ? 38 : 4
 function pemegang(p) { return String(p.petugas || '').split(',').map(x => x.trim()).filter(Boolean); }
 function warnaAman(w) { return /^#[0-9A-Fa-f]{6}$/.test(String(w || '')) ? w : ''; }
 function anggota(nama) { return S.timByNama.get(String(nama || '').toLowerCase()) || null; }
+
+/* ---------------- Tugas visit ---------------- */
+function samaNama(a, b) { return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase(); }
+/** Pengguna yang sedang masuk, dicocokkan dengan daftar tim lewat namanya. */
+function saya() { return anggota(String(S.user.nama || '').trim()); }
+function sayaLeader() { const m = saya(); return !!(m && m.peran === 'Leader'); }
+function kelasTugas(g) {
+  if (g.status !== 'Belum') return g.status === 'Selesai' ? 'selesai' : 'batal';
+  const t = String(g.tanggal || '').slice(0, 10), h = hariIni();
+  return t < h ? 'terlambat' : t === h ? 'hariini' : 'nanti';
+}
+function labelTanggalTugas(g) {
+  const k = kelasTugas(g), t = String(g.tanggal || '').slice(0, 10);
+  if (k === 'hariini') return 'Hari ini';
+  if (k === 'terlambat') return 'Terlambat, ' + tglStr(t);
+  if (t === ymd(new Date(Date.now() + 86400000))) return 'Besok';
+  return tglStr(t);
+}
+function urutTugas(a, b) { return String(a.tanggal).localeCompare(String(b.tanggal)) || String(a.dibuat_pada).localeCompare(String(b.dibuat_pada)); }
+function tugasSaya() { return S.tugas.filter(g => g.status === 'Belum' && samaNama(g.ditugaskan_ke, S.user.nama)).sort(urutTugas); }
+function tugasProspek(id) { return S.tugas.filter(g => String(g.prospek_id) === String(id)).sort(urutTugas); }
+const TUGAS_7_HARI = () => ymd(new Date(Date.now() - 6 * 86400000));
+
+/** Satu baris tugas. opsi.saya: tampilkan pemberi tugas; selain itu tampilkan penerimanya. */
+function barisTugas(g, opsi) {
+  opsi = opsi || {};
+  const p = S.byId.get(String(g.prospek_id));
+  const k = kelasTugas(g);
+  const bolehSelesai = g.status === 'Belum' && (samaNama(g.ditugaskan_ke, S.user.nama) || sayaLeader());
+  const bolehBatal = g.status === 'Belum' && sayaLeader() && !opsi.tanpaBatal;
+  const siapa = opsi.saya ? 'dari ' + g.ditugaskan_oleh : 'untuk ' + g.ditugaskan_ke + (anggota(g.ditugaskan_ke) ? '' : ' (tidak di tim)');
+  const status = g.status === 'Selesai' ? 'Selesai' + (g.selesai_pada ? ' ' + tglStr(g.selesai_pada) : '') : g.status === 'Batal' ? 'Dibatalkan' : labelTanggalTugas(g);
+  return `<li class="tg-item ${k}">
+    <div class="tg-isi">
+      ${opsi.tanpaNama ? '' : (p ? `<button type="button" class="tg-nama" data-buka="${esc(g.prospek_id)}">${esc(p.nama)}</button>` : '<b class="tg-nama">Prospek sudah dihapus</b>')}
+      <small><span class="tg-tgl ${k}">${esc(status)}</span> · ${esc(g.tujuan || 'Approach')} · ${esc(siapa)}</small>
+      ${g.catatan ? `<small class="tg-catatan">${esc(g.catatan)}</small>` : ''}
+    </div>
+    ${bolehSelesai || bolehBatal ? `<div class="tg-aksi">
+      ${bolehSelesai ? `<button type="button" class="btn btn-sm btn-line" data-tugas-selesai="${esc(g.id)}">Tandai selesai</button>` : ''}
+      ${bolehBatal ? `<button type="button" class="linkbtn tg-batal" data-tugas-batal="${esc(g.id)}">Batalkan</button>` : ''}
+    </div>` : ''}
+  </li>`;
+}
+
+function renderTugasSaya() {
+  const el = $('#cardTugasSaya');
+  const daftar = tugasSaya();
+  const selesai7 = S.tugas.filter(g => g.status === 'Selesai' && samaNama(g.ditugaskan_ke, S.user.nama) && String(g.selesai_pada).slice(0, 10) >= TUGAS_7_HARI()).length;
+  if (!saya() && !daftar.length) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  const n = k => daftar.filter(g => kelasTugas(g) === k).length;
+  const terlambat = n('terlambat');
+  const adaRute = daftar.some(g => ['terlambat', 'hariini'].includes(kelasTugas(g)) && S.byId.get(String(g.prospek_id)) && latlng(S.byId.get(String(g.prospek_id))));
+  el.innerHTML = `
+    <div class="card-head"><h2>Tugas visit saya</h2>${adaRute ? '<button type="button" class="btn btn-sm btn-ink" data-tugas-rute>Rute tugas hari ini</button>' : ''}</div>
+    ${daftar.length ? `
+      <div class="tg-ringkas">
+        ${terlambat ? `<span class="tg-chip terlambat"><b>${terlambat}</b> terlambat</span>` : ''}
+        <span class="tg-chip${n('hariini') ? ' hariini' : ''}"><b>${n('hariini')}</b> hari ini</span>
+        <span class="tg-chip"><b>${n('nanti')}</b> mendatang</span>
+        ${selesai7 ? `<span class="tg-chip selesai"><b>${selesai7}</b> selesai 7 hari terakhir</span>` : ''}
+      </div>
+      <ul class="tugas-list">${daftar.slice(0, 8).map(g => barisTugas(g, { saya: true, tanpaBatal: true })).join('')}</ul>
+      ${daftar.length > 8 ? `<p class="card-note">${daftar.length - 8} tugas lainnya bisa dilihat di detail prospek masing-masing.</p>` : ''}`
+    : `<p class="muted" style="margin:0">Belum ada tugas visit untukmu${selesai7 ? ', dan ' + selesai7 + ' tugas sudah selesai dalam 7 hari terakhir' : ''}. Tugas dari Leader akan muncul di sini.</p>`}`;
+}
+
+function renderTugasTim() {
+  const el = $('#cardTugasTim');
+  if (!sayaLeader()) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  const aku = saya();
+  const berjalan = S.tugas.filter(g => g.status === 'Belum');
+  const batas7 = TUGAS_7_HARI();
+  // Tim sendiri ditampilkan lebih dulu, lalu tim lain
+  const urutTim = a => (String(a.tim || '') === String(aku.tim || '') ? '0' : '1') + String(a.tim || '~');
+  const orang = S.tim.slice().sort((a, b) => urutTim(a).localeCompare(urutTim(b), 'id') || String(a.nama).localeCompare(String(b.nama), 'id'));
+  const isi = orang.map(a => {
+    const milik = berjalan.filter(g => samaNama(g.ditugaskan_ke, a.nama));
+    const hit = k => milik.filter(g => kelasTugas(g) === k).length;
+    const selesai = S.tugas.filter(g => g.status === 'Selesai' && samaNama(g.ditugaskan_ke, a.nama) && String(g.selesai_pada).slice(0, 10) >= batas7).length;
+    const terlambat = hit('terlambat');
+    return `<tr>
+      <td><span class="pic-cell"><i class="sw-dot" style="--c:${warnaAnggota(a.nama).warna}"></i><span>${esc(a.nama)} <small>${esc([a.tim, a.peran === 'Leader' ? 'Leader' : ''].filter(Boolean).join(', '))}</small></span></span></td>
+      <td class="${terlambat ? 'td-alert' : ''}">${terlambat}</td><td>${hit('hariini')}</td><td>${hit('nanti')}</td><td>${selesai}</td>
+    </tr>`;
+  }).join('');
+  const telat = berjalan.filter(g => kelasTugas(g) === 'terlambat').sort(urutTugas);
+  el.innerHTML = `
+    <div class="card-head"><h2>Tugas visit tim</h2><button type="button" class="btn btn-sm btn-ink" data-tugas-baru>Tugaskan visit</button></div>
+    ${S.tim.length ? `<div class="table-wrap"><table class="pic"><thead><tr><th>Anggota</th><th>Terlambat</th><th>Hari ini</th><th>Mendatang</th><th>Selesai 7 hari</th></tr></thead><tbody>${isi}</tbody></table></div>`
+      : '<p class="muted">Belum ada anggota tim. Tambahkan lewat Kelola tim.</p>'}
+    ${telat.length ? `<h3 class="tg-sub">Terlambat</h3><ul class="tugas-list">${telat.slice(0, 6).map(g => barisTugas(g)).join('')}</ul>` : ''}`;
+}
+
+function upsertTugas(g) {
+  const i = S.tugas.findIndex(x => String(x.id) === String(g.id));
+  if (i >= 0) S.tugas[i] = g; else S.tugas.push(g);
+  simpanCache(); renderAll();
+}
+
+async function ubahStatusTugas(id, status, btn) {
+  const g = S.tugas.find(x => String(x.id) === String(id));
+  if (!g) return;
+  const p = S.byId.get(String(g.prospek_id));
+  if (status === 'Batal') {
+    const ok = await konfirmasi('Batalkan tugas ini?', 'Tugas visit ke ' + (p ? p.nama : 'prospek ini') + ' untuk ' + g.ditugaskan_ke + ' akan dibatalkan.', 'Batalkan tugas');
+    if (!ok) return;
+  }
+  if (btn) setBusy(btn, true, 'Menyimpan...');
+  try {
+    const r = await api('updateTask', { id: g.id, ubah: { status: status }, expected: g.diperbarui_pada || '' });
+    upsertTugas(r.tugas);
+    toast(status === 'Selesai' ? 'Tugas ditandai selesai' : status === 'Batal' ? 'Tugas dibatalkan' : 'Tugas dibuka lagi');
+  } catch (e) {
+    if (e.code === 'conflict') { toast(e.message + ' Data dimuat ulang.', 'err'); loadData(); }
+    else toast(e.message, 'err');
+  } finally {
+    if (btn && btn.isConnected) setBusy(btn, false);
+  }
+}
+
+/** Form penugasan. prospekIds: prospek yang langsung terpilih (misalnya dari panel detail). */
+function bukaFormTugas(prospekIds) {
+  if (!sayaLeader()) { toast('Hanya Leader yang bisa menugaskan visit', 'err'); return; }
+  const f = $('#formTugas');
+  f.reset();
+  S.tugasPilih = new Set((prospekIds || []).map(String));
+  $('#dgCari').value = '';
+  f.elements.tanggal.value = hariIni();
+  f.elements.tanggal.min = hariIni();
+  // Anggota dikelompokkan per tim; tim Leader sendiri paling atas
+  const aku = saya(), grup = new Map();
+  S.tim.forEach(m => { const k = m.tim || 'Tanpa tim'; if (!grup.has(k)) grup.set(k, []); grup.get(k).push(m); });
+  const kunci = [...grup.keys()].sort((a, b) => (a === aku.tim ? -1 : b === aku.tim ? 1 : a.localeCompare(b, 'id')));
+  f.elements.ditugaskan_ke.innerHTML = '<option value="">Pilih anggota</option>' + kunci.map(k =>
+    `<optgroup label="${esc(k)}">${grup.get(k).map(m => `<option value="${esc(m.nama)}">${esc(m.nama)}${m.peran === 'Leader' ? ' (Leader)' : ''}</option>`).join('')}</optgroup>`).join('');
+  $('#dgError').hidden = true;
+  const satu = S.tugasPilih.size === 1 ? S.byId.get([...S.tugasPilih][0]) : null;
+  $('#dgSub').textContent = satu ? 'Kunjungan ke ' + satu.nama + '. Prospek lain bisa ikut dipilih.' : 'Pilih prospek, siapa yang berkunjung, dan kapan.';
+  renderDgProspek();
+  $('#dlgTugas').showModal();
+}
+
+function renderDgProspek() {
+  const q = String($('#dgCari').value || '').trim().toLowerCase();
+  const urut = S.prospek
+    .filter(p => !statusOf(p).akhir || S.tugasPilih.has(String(p.id)))
+    .filter(p => !q || String(p.nama || '').toLowerCase().includes(q) || String(p.alamat || '').toLowerCase().includes(q))
+    .map(p => ({ p: p, pr: skorProspek(p), pilih: S.tugasPilih.has(String(p.id)) }))
+    .sort((a, b) => (b.pilih - a.pilih) || (b.pr.skor - a.pr.skor))
+    .slice(0, 60);
+  $('#dgProspek').innerHTML = urut.length ? urut.map(({ p, pr, pilih }) => {
+    const jalan = tugasProspek(p.id).filter(g => g.status === 'Belum');
+    const ket = [pr.tingkat.id !== 'P0' ? pr.tingkat.id : '', labelStatus(p.status), p.alamat].filter(Boolean).join(', ');
+    return `<li><label><input type="checkbox" value="${esc(p.id)}"${pilih ? ' checked' : ''}>
+      <span><b>${esc(p.nama)}</b><small>${esc(ket)}${jalan.length ? `<em class="dg-sudah">Sudah ditugaskan ke ${esc(jalan.map(g => g.ditugaskan_ke).join(', '))}</em>` : ''}</small></span></label></li>`;
+  }).join('') : '<li class="muted dg-kosong">Tidak ada prospek yang cocok.</li>';
+  $('#dgJumlah').textContent = S.tugasPilih.size ? S.tugasPilih.size + ' prospek dipilih' : 'Belum ada prospek dipilih';
+}
+
+async function simpanTugas(ev) {
+  ev.preventDefault();
+  const f = ev.target, errEl = $('#dgError');
+  const data = {
+    prospek_ids: [...S.tugasPilih], ditugaskan_ke: f.elements.ditugaskan_ke.value, tanggal: f.elements.tanggal.value,
+    tujuan: ($$('input[name=tujuan]:checked', f)[0] || {}).value || 'Approach', catatan: String(f.elements.catatan.value || '').trim()
+  };
+  const kurang = [];
+  if (!data.prospek_ids.length) kurang.push('prospek');
+  if (!data.ditugaskan_ke) kurang.push('anggota yang ditugaskan');
+  if (!data.tanggal) kurang.push('tanggal kunjungan');
+  if (kurang.length) { errEl.textContent = 'Lengkapi dulu: ' + kurang.join(', ') + '.'; errEl.hidden = false; return; }
+  errEl.hidden = true;
+  const btn = $('#dgSubmit');
+  setBusy(btn, true, 'Menugaskan...');
+  try {
+    const r = await api('assignVisit', { tugas: data });
+    (r.tugas || []).forEach(g => S.tugas.push(g));
+    simpanCache(); renderAll();
+    $('#dlgTugas').close();
+    const n = (r.tugas || []).length;
+    toast(n ? n + ' tugas visit dikirim ke ' + data.ditugaskan_ke + (r.dilewati ? ', ' + r.dilewati + ' sudah ada sebelumnya' : '')
+      : 'Tugas yang sama sudah ada, tidak dibuat ulang');
+  } catch (e) {
+    tanganiError(e, errEl);
+  } finally {
+    setBusy(btn, false);
+  }
+}
+
+/** Rute kunjungan dari tugas saya yang jatuh tempo hari ini atau sudah terlambat. */
+function ruteTugasHariIni() {
+  const ids = [...new Set(tugasSaya().filter(g => ['terlambat', 'hariini'].includes(kelasTugas(g))).map(g => String(g.prospek_id)))];
+  const daftar = ids.map(id => S.byId.get(id)).filter(p => p && latlng(p));
+  if (!daftar.length) { toast('Tugas hari ini belum punya titik lokasi', 'err'); return; }
+  setView('map');
+  bukaHalaman('map').then(() => {
+    if (daftar.length === 1) pilih(String(daftar[0].id), { fly: true });
+    else susunRute({ prospek: daftar, judul: 'tugas visit hari ini' });
+  });
+}
 function warnaAnggota(nama) {
   if (nama === SEMUA_TIM) return { warna: WARNA_SEMUA_TIM, teks: '#FFFFFF' };
   const m = anggota(nama);
@@ -1516,8 +1822,68 @@ async function demoApi(action, req) {
   const simpan = () => store.set(KEY.demo, db);
 
   if (!Array.isArray(db.tim)) { db.tim = seedDemo().tim; simpan(); }
+  if (!Array.isArray(db.tugas)) {
+    // Data demo lama: lengkapi tim contoh dengan tim dan peran, lalu tambahkan tugas contoh
+    const benih = seedDemo();
+    benih.tim.forEach(b => {
+      const m = db.tim.find(x => String(x.id) === String(b.id));
+      if (m) { if (!m.tim) m.tim = b.tim; if (!m.peran) m.peran = b.peran; }
+      else if (!db.tim.some(x => String(x.nama).toLowerCase() === String(b.nama).toLowerCase())) db.tim.push(b);
+    });
+    db.tugas = benih.tugas.filter(g => db.prospek.some(p => String(p.id) === String(g.prospek_id)));
+    simpan();
+  }
 
-  if (action === 'list') return clone({ prospek: db.prospek, aktivitas: db.aktivitas, tim: db.tim });
+  if (action === 'list') return clone({ prospek: db.prospek, aktivitas: db.aktivitas, tim: db.tim, tugas: db.tugas });
+
+  const anggotaDb = nm => db.tim.find(m => String(m.nama).trim().toLowerCase() === String(nm || '').trim().toLowerCase()) || null;
+  const leaderDb = nm => { const m = anggotaDb(nm); return !!(m && m.peran === 'Leader'); };
+
+  if (action === 'assignVisit') {
+    const input = req.tugas || {};
+    const leader = anggotaDb(user);
+    if (!leader || leader.peran !== 'Leader') throw ApiError('Hanya Leader yang bisa menugaskan visit. Minta admin menandai nama "' + user + '" sebagai Leader di Kelola tim.', 'forbidden');
+    const ke = anggotaDb(input.ditugaskan_ke);
+    if (!ke) throw ApiError('Pilih anggota tim yang akan ditugaskan.', 'invalid');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.tanggal || ''))) throw ApiError('Tanggal kunjungan tidak valid.', 'invalid');
+    const ids = [...new Set((input.prospek_ids || []).map(x => String(x || '').trim()).filter(Boolean))];
+    if (!ids.length) throw ApiError('Pilih prospek yang akan dikunjungi.', 'invalid');
+    if (ids.length > 50) throw ApiError('Maksimal 50 prospek sekali tugaskan.', 'invalid');
+    if (ids.some(x => !db.prospek.some(p => String(p.id) === x))) throw ApiError('Ada prospek yang tidak ditemukan. Mungkin sudah dihapus.', 'not_found');
+    const tujuan = JENIS_TUGAS.includes(input.tujuan) ? input.tujuan : 'Approach';
+    const baru = []; let dilewati = 0;
+    ids.forEach(pid => {
+      if (db.tugas.some(g => g.status === 'Belum' && String(g.prospek_id) === pid && String(g.ditugaskan_ke).toLowerCase() === ke.nama.toLowerCase() && g.tanggal === input.tanggal)) { dilewati++; return; }
+      baru.push({ id: buatId('G'), prospek_id: pid, ditugaskan_ke: ke.nama, ditugaskan_oleh: leader.nama, tanggal: input.tanggal, tujuan: tujuan,
+        catatan: String(input.catatan || '').trim().slice(0, 500), status: 'Belum', selesai_oleh: '', selesai_pada: '',
+        dibuat_oleh: user, dibuat_pada: now, diperbarui_oleh: user, diperbarui_pada: now });
+    });
+    db.tugas.push(...baru); simpan();
+    return clone({ tugas: baru, dilewati: dilewati });
+  }
+
+  if (action === 'updateTask') {
+    const i = db.tugas.findIndex(g => String(g.id) === String(req.id));
+    if (i < 0) throw ApiError('Tugas tidak ditemukan. Mungkin sudah dihapus.', 'not_found');
+    const lama = db.tugas[i], ubah = req.ubah || {};
+    if (req.expected && String(lama.diperbarui_pada) !== String(req.expected)) throw ApiError('Tugas ini baru diubah oleh ' + (lama.diperbarui_oleh || 'pengguna lain') + '.', 'conflict', { tugas: clone(lama) });
+    const leader = leaderDb(user), penerima = String(lama.ditugaskan_ke).toLowerCase() === String(user).toLowerCase();
+    const data = {};
+    if (ubah.status !== undefined) {
+      if (!['Belum', 'Selesai', 'Batal'].includes(ubah.status)) throw ApiError('Status tugas tidak dikenal.', 'invalid');
+      if (ubah.status === 'Batal' && !leader) throw ApiError('Hanya Leader yang bisa membatalkan tugas.', 'forbidden');
+      if (ubah.status !== 'Batal' && !leader && !penerima) throw ApiError('Tugas ini milik ' + lama.ditugaskan_ke + '. Hanya dia atau Leader yang bisa menandainya.', 'forbidden');
+      Object.assign(data, { status: ubah.status, selesai_oleh: ubah.status === 'Selesai' ? user : '', selesai_pada: ubah.status === 'Selesai' ? now : '' });
+    }
+    if (['tanggal', 'ditugaskan_ke', 'tujuan', 'catatan'].some(k => ubah[k] !== undefined) && !leader) throw ApiError('Hanya Leader yang bisa mengubah jadwal, penerima, atau isi tugas.', 'forbidden');
+    if (ubah.tanggal !== undefined) { if (!/^\d{4}-\d{2}-\d{2}$/.test(String(ubah.tanggal))) throw ApiError('Tanggal kunjungan tidak valid.', 'invalid'); data.tanggal = ubah.tanggal; }
+    if (ubah.ditugaskan_ke !== undefined) { const ke = anggotaDb(ubah.ditugaskan_ke); if (!ke) throw ApiError('Anggota tim yang dipilih tidak ditemukan.', 'invalid'); data.ditugaskan_ke = ke.nama; }
+    if (ubah.tujuan !== undefined) data.tujuan = JENIS_TUGAS.includes(ubah.tujuan) ? ubah.tujuan : 'Approach';
+    if (ubah.catatan !== undefined) data.catatan = String(ubah.catatan || '').trim().slice(0, 500);
+    db.tugas[i] = Object.assign({}, lama, data, { diperbarui_oleh: user, diperbarui_pada: now });
+    simpan();
+    return clone({ tugas: db.tugas[i] });
+  }
 
   if (action === 'saveMember') {
     const input = req.anggota || {};
@@ -1527,14 +1893,18 @@ async function demoApi(action, req) {
     if (db.tim.some(m => String(m.id) !== String(input.id || '') && String(m.nama).toLowerCase() === nama.toLowerCase())) {
       throw ApiError('Nama ' + nama + ' sudah ada di tim.', 'invalid');
     }
-    const data = { nama: nama, jabatan: String(input.jabatan || '').trim(), warna: warnaAman(input.warna) };
+    const data = { nama: nama, jabatan: String(input.jabatan || '').trim(), warna: warnaAman(input.warna),
+      tim: String(input.tim || '').replace(/,/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40), peran: PERAN_TIM.includes(input.peran) ? input.peran : 'Anggota' };
     let diperbarui = 0;
     if (input.id) {
       const i = db.tim.findIndex(m => String(m.id) === String(input.id));
       if (i < 0) throw ApiError('Anggota tim tidak ditemukan.', 'not_found');
       const lama = db.tim[i];
       db.tim[i] = Object.assign({}, lama, data, { diperbarui_oleh: user, diperbarui_pada: now });
-      if (lama.nama !== nama) diperbarui = demoGantiPemegang(db, lama.nama, nama, user, now);
+      if (lama.nama !== nama) {
+        diperbarui = demoGantiPemegang(db, lama.nama, nama, user, now);
+        db.tugas.forEach(g => { if (g.ditugaskan_ke === lama.nama) g.ditugaskan_ke = nama; if (g.ditugaskan_oleh === lama.nama) g.ditugaskan_oleh = nama; });
+      }
     } else {
       db.tim.push(Object.assign({ id: buatId('T') }, data, { dibuat_oleh: user, dibuat_pada: now, diperbarui_oleh: user, diperbarui_pada: now }));
     }
@@ -1549,6 +1919,7 @@ async function demoApi(action, req) {
     db.tim.splice(i, 1);
     const tujuan = String(req.alihkan_ke || '').trim();
     const n = demoGantiPemegang(db, nama, tujuan === nama ? '' : tujuan, user, now);
+    if (tujuan && tujuan !== nama && anggotaDb(tujuan)) db.tugas.forEach(g => { if (g.status === 'Belum' && g.ditugaskan_ke === nama) g.ditugaskan_ke = anggotaDb(tujuan).nama; });
     simpan();
     return { id: req.id, prospek_diperbarui: n };
   }
@@ -1577,6 +1948,7 @@ async function demoApi(action, req) {
     if (i < 0) throw ApiError('Prospek tidak ditemukan. Mungkin sudah dihapus.', 'not_found');
     db.prospek.splice(i, 1);
     db.aktivitas = db.aktivitas.filter(a => String(a.prospek_id) !== String(req.id));
+    db.tugas = db.tugas.filter(g => String(g.prospek_id) !== String(req.id));
     simpan();
     return { id: req.id };
   }
@@ -1673,9 +2045,10 @@ function seedDemo() {
     A('P-DEMO-09', 15, 'Approach', 'Telepon', 'Nasabah memilih bank lain karena bunga lebih rendah.', 'Gagal')
   ];
   const tim = [
-    { id: 'T-DEMO-1', nama: 'Rina Prasetyo', jabatan: 'RM', warna: '#2563EB', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(60), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(60) },
-    { id: 'T-DEMO-2', nama: 'Dimas Hakim', jabatan: 'RM', warna: '#D9480F', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(60), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(60) },
-    { id: 'T-DEMO-3', nama: 'Sari Wulandari', jabatan: 'MT', warna: '#0F9D8A', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(30), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(30) }
+    { id: 'T-DEMO-1', nama: 'Rina Prasetyo', jabatan: 'RM', warna: '#2563EB', tim: 'Tim A', peran: 'Leader', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(60), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(60) },
+    { id: 'T-DEMO-2', nama: 'Dimas Hakim', jabatan: 'RM', warna: '#D9480F', tim: 'Tim A', peran: 'Anggota', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(60), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(60) },
+    { id: 'T-DEMO-3', nama: 'Sari Wulandari', jabatan: 'MT', warna: '#0F9D8A', tim: 'Tim B', peran: 'Leader', dibuat_oleh: 'Rina Prasetyo', dibuat_pada: ts(30), diperbarui_oleh: 'Rina Prasetyo', diperbarui_pada: ts(30) },
+    { id: 'T-DEMO-4', nama: 'Andi Pratama', jabatan: 'MT', warna: '#7C3AED', tim: 'Tim B', peran: 'Anggota', dibuat_oleh: 'Sari Wulandari', dibuat_pada: ts(20), diperbarui_oleh: 'Sari Wulandari', diperbarui_pada: ts(20) }
   ];
   const pembagian = {
     'P-DEMO-01': 'Rina Prasetyo',
@@ -1690,7 +2063,20 @@ function seedDemo() {
     'P-DEMO-10': ''
   };
   prospek.forEach(p => { p.petugas = pembagian[p.id] !== undefined ? pembagian[p.id] : p.petugas; });
-  return { prospek: prospek, aktivitas: aktivitas, tim: tim };
+  // Tugas visit contoh: hari ini, terlambat, mendatang, dan yang sudah selesai
+  const G = (id, pid, ke, oleh, n, tujuan, catatan, status) => ({ id: id, prospek_id: pid, ditugaskan_ke: ke, ditugaskan_oleh: oleh,
+    tanggal: tgl(n), tujuan: tujuan, catatan: catatan, status: status || 'Belum',
+    selesai_oleh: status === 'Selesai' ? ke : '', selesai_pada: status === 'Selesai' ? ts(n) : '',
+    dibuat_oleh: oleh, dibuat_pada: ts(Math.max(n, 0) + 2), diperbarui_oleh: status === 'Selesai' ? ke : oleh, diperbarui_pada: ts(Math.max(n, 0)) });
+  const tugas = [
+    G('G-DEMO-1', 'P-DEMO-04', 'Dimas Hakim', 'Rina Prasetyo', 0, 'Approach', 'Temui pengurus koperasi, tawarkan payroll dan tabungan anggota.'),
+    G('G-DEMO-2', 'P-DEMO-10', 'Dimas Hakim', 'Rina Prasetyo', 0, 'Approach', 'Cek kebutuhan modal kerja apotek.'),
+    G('G-DEMO-3', 'P-DEMO-03', 'Sari Wulandari', 'Rina Prasetyo', 2, 'Maintain', 'Follow up penawaran EDC.'),
+    G('G-DEMO-4', 'P-DEMO-07', 'Andi Pratama', 'Sari Wulandari', -1, 'Approach', 'Temui bendahara yayasan, tawarkan pembayaran SPP lewat bank.'),
+    G('G-DEMO-5', 'P-DEMO-01', 'Rina Prasetyo', 'Sari Wulandari', -2, 'Maintain', 'Bawa proposal final dan jadwalkan tanda tangan.'),
+    G('G-DEMO-6', 'P-DEMO-02', 'Dimas Hakim', 'Rina Prasetyo', 3, 'Approach', 'Presentasi kredit modal kerja.', 'Selesai')
+  ];
+  return { prospek: prospek, aktivitas: aktivitas, tim: tim, tugas: tugas };
 }
 
 /* ================================================================
@@ -1713,9 +2099,10 @@ function indexData() {
   S.stat.forEach(st => st.list.sort((x, y) => String(y.tanggal).localeCompare(String(x.tanggal)) || String(y.dibuat_pada).localeCompare(String(x.dibuat_pada))));
 }
 
-function applyData(prospek, aktivitas, tim) {
+function applyData(prospek, aktivitas, tim, tugas) {
   S.prospek = Array.isArray(prospek) ? prospek : [];
   S.aktivitas = Array.isArray(aktivitas) ? aktivitas : [];
+  S.tugas = Array.isArray(tugas) ? tugas : [];
   S.tim = (Array.isArray(tim) ? tim : []).slice().sort((a, b) => String(a.nama).localeCompare(String(b.nama), 'id'));
   S.timByNama = new Map(S.tim.map(m => [String(m.nama).toLowerCase(), m]));
   indexData();
@@ -1734,7 +2121,7 @@ function sesuaikanPetaAwal() {
 
 function simpanCache() {
   if (S.demo) return;
-  store.set(KEY.cache, { url: CONFIG.API_URL.trim(), prospek: S.prospek, aktivitas: S.aktivitas, tim: S.tim, waktu: S.lastSync });
+  store.set(KEY.cache, { url: CONFIG.API_URL.trim(), prospek: S.prospek, aktivitas: S.aktivitas, tim: S.tim, tugas: S.tugas, waktu: S.lastSync });
 }
 
 function upsertProspek(p) {
@@ -1752,7 +2139,7 @@ async function loadData(opt) {
   try {
     const d = await api('list');
     S.lastSync = sekarangStr();
-    applyData(d.prospek, d.aktivitas, d.tim);
+    applyData(d.prospek, d.aktivitas, d.tim, d.tugas);
     simpanCache();
     if (S.bannerKind === 'err') hideBanner();
     if (opt.manual) toast('Data diperbarui');
@@ -2024,6 +2411,15 @@ function renderDetail() {
     : '<p class="muted">Belum ada PIC. Tetapkan lewat Ubah data agar jelas siapa yang memegang.</p>';
   const opsi = statusIds(p.status).map(x => `<option value="${esc(x)}"${x === p.status ? ' selected' : ''}>${esc(labelStatus(x))}</option>`).join('');
   const nilai = rupiah(p.estimasi_nilai);
+  const tugasP = tugasProspek(id);
+  const tugasJalan = tugasP.filter(g => g.status === 'Belum');
+  const tugasLalu = tugasP.filter(g => g.status !== 'Belum').reverse();
+  const bagianTugas = tugasP.length || sayaLeader() ? `
+      <section class="d-sec">
+        <div class="d-sec-head"><h3>Tugas visit</h3>${sayaLeader() ? '<button type="button" class="linkbtn" data-act="tugaskan">Tugaskan visit</button>' : ''}</div>
+        ${tugasJalan.length ? `<ul class="tugas-list">${tugasJalan.map(g => barisTugas(g, { tanpaNama: true })).join('')}</ul>` : '<p class="muted">Belum ada tugas visit yang berjalan.</p>'}
+        ${tugasLalu.length ? `<details class="tg-riwayat"><summary>Riwayat tugas (${tugasLalu.length})</summary><ul class="tugas-list">${tugasLalu.map(g => barisTugas(g, { tanpaNama: true })).join('')}</ul></details>` : ''}
+      </section>` : '';
 
   const timeline = st.list.length ? `<ol class="timeline">${st.list.map(a => `
       <li class="t-item${a.jenis === 'Maintain' ? ' maintain' : ''}">
@@ -2085,7 +2481,7 @@ function renderDetail() {
       <section class="d-sec">
         <h3>PIC pemegang</h3>
         ${picTags}
-      </section>
+      </section>${bagianTugas}
       <section class="d-sec">
         <h3>Catatan</h3>
         <p class="note">${p.catatan ? esc(p.catatan) : '<span class="muted">Belum ada catatan.</span>'}</p>
@@ -2191,7 +2587,9 @@ function renderHome() {
     ${totalBar ? `<div class="fresh-bar">${URUTAN_SENTUHAN.filter(k => hitung[k]).map(k => `<i style="--c:${SENTUHAN[k].warna};flex:${hitung[k]}" title="${esc(SENTUHAN[k].label)}"></i>`).join('')}</div>` : ''}
     <ul class="fresh-legend">${URUTAN_SENTUHAN.map(k => `<li><button type="button" data-sentuhan="${k}"><i style="--c:${SENTUHAN[k].warna}"></i><b>${hitung[k]}</b> ${esc(SENTUHAN[k].label)}</button></li>`).join('')}</ul>`;
 
+  renderTugasSaya();
   renderAksiHariIni();
+  renderTugasTim();
 
   // Angka utama
   const aktif = S.prospek.filter(p => !statusOf(p).akhir && p.status !== 'Berhasil');
@@ -3495,6 +3893,9 @@ async function simpanProspek(ev) {
   try {
     const r = await api('saveProspect', { prospek: data, expected: S.editingExpected });
     upsertProspek(r.prospek);
+    const asal = S.saranAsal;
+    S.saranAsal = null;
+    if (baru && asal && (normalNama(asal.nama) === normalNama(data.nama) || jarakKm(asal, { lat: Number(data.lat), lng: Number(data.lng) }) < 0.05)) hapusDariSaran(asal);
     $('#dlgProspek').close();
     if (S.page !== 'map') { bukaHalaman('map'); setView('map'); }
     pilih(String(r.prospek.id), { fly: true });
@@ -4162,12 +4563,23 @@ const LABEL_JENIS = {
   'arts and entertainment': 'hiburan', 'toys and games store': 'toko mainan', 'photo': 'studio foto', 'flowers and gifts store': 'toko bunga dan hadiah',
   'social or community service': 'layanan sosial', 'electric utility provider': 'layanan listrik', 'electronics repair': 'servis elektronik',
   'sporting goods store': 'toko perlengkapan olahraga', 'second hand store': 'toko barang bekas', 'campus building': 'gedung kampus',
-  'travel and transportation': 'transportasi', 'education': 'pendidikan', 'legal service': 'jasa hukum', 'auto dealer': 'dealer kendaraan',
+  'travel and transportation': 'transportasi', 'education': 'pendidikan',
+  'clothing store': 'toko pakaian', 'hair salon': 'salon rambut', 'mobile phone store': 'toko HP', 'hardware store': 'toko bangunan',
+  'furniture store': 'toko mebel', 'printing services': 'percetakan', 'jewelry store': 'toko perhiasan', 'shoe store': 'toko sepatu',
+  'cosmetics store': 'toko kosmetik', 'pet store': 'toko hewan peliharaan', 'book store': 'toko buku', 'spa': 'spa',
+  'car dealer': 'dealer mobil', 'motorcycle dealer': 'dealer motor', 'travel agency': 'agen perjalanan', 'real estate agent': 'agen properti',
+  'accountant': 'jasa akuntansi', 'lawyer': 'kantor hukum', 'insurance agency': 'agen asuransi', 'bubble tea': 'kedai minuman teh',
+  'noodles restaurant': 'rumah makan mi', 'indonesian restaurant': 'rumah makan Indonesia', 'chinese restaurant': 'rumah makan Tionghoa',
+  'japanese restaurant': 'rumah makan Jepang', 'ice cream shop': 'kedai es krim', 'dessert shop': 'kedai makanan penutup',
+  'grocery store': 'toko kelontong', 'computer store': 'toko komputer', 'gift shop': 'toko suvenir', 'florist': 'toko bunga',
+  'photography studio': 'studio foto', 'gas station': 'SPBU', 'parking': 'area parkir', 'office': 'kantor', 'wholesale store': 'toko grosir',
+  'textile store': 'toko tekstil', 'eyewear store': 'optik', 'medical center': 'pusat layanan kesehatan', 'legal service': 'jasa hukum', 'auto dealer': 'dealer kendaraan',
   'reproductive perinatal and womens care': 'klinik kandungan', 'complementary and alternative medicine': 'pengobatan alternatif', 'yes': 'usaha'
 };
 function labelJenis(j) {
-  const k = String(j || '').toLowerCase().trim();
-  return LABEL_JENIS[k] || String(j || '');
+  // Data Overture menulis jenis dengan garis bawah ("clothing_store"), kamus label memakai spasi.
+  const k = String(j || '').replace(/_/g, ' ').toLowerCase().trim();
+  return LABEL_JENIS[k] || String(j || '').replace(/_/g, ' ');
 }
 
 /** Cocok kata untuk pencarian: awalan sama (4 huruf ke atas) atau beda 1 huruf (2 huruf untuk kata 9 huruf ke atas).
@@ -4468,18 +4880,20 @@ function renderSaran() {
       // batas area sudah digambar di lapisan area
     } else if (wilayah.kotak) {
       L.rectangle([[wilayah.kotak.selatan, wilayah.kotak.barat], [wilayah.kotak.utara, wilayah.kotak.timur]],
-        { color: CONFIG_WARNA_SARAN, weight: 1, fillOpacity: .04 }).addTo(S.saranLayer);
+        { color: CONFIG_WARNA_SARAN, weight: 1, fillOpacity: .04, interactive: false }).addTo(S.saranLayer);
     } else if (S.saranPusat) {
-      L.circle([S.saranPusat.lat, S.saranPusat.lng], { radius: wilayah.radius || 500, color: CONFIG_WARNA_SARAN, weight: 1, fillOpacity: .05 }).addTo(S.saranLayer);
+      L.circle([S.saranPusat.lat, S.saranPusat.lng], { radius: wilayah.radius || 500, color: CONFIG_WARNA_SARAN, weight: 1, fillOpacity: .05, interactive: false }).addTo(S.saranLayer);
     }
     // Titik digambar di kanvas: ratusan titik tetap ringan saat peta digeser, termasuk di HP.
-    if (!S.kanvasSaran) S.kanvasSaran = L.canvas({ padding: 0.3 });
-    S.saran.forEach((x, i) => {
-      L.circleMarker([x.lat, x.lng], { renderer: S.kanvasSaran, radius: 6.5, color: CONFIG_WARNA_SARAN, weight: 3, dashArray: '3 3',
-        fillColor: '#fff', fillOpacity: 1 })
-        .bindTooltip(esc(x.nama), { direction: 'top', offset: [0, -6] })
-        .on('click', () => tambahDariSaran(i))
-        .addTo(S.saranLayer);
+    // Titik calon prospek punya lapisan sendiri di atas lingkaran dan kotak area, supaya selalu bisa diklik.
+    // Area sentuh diperluas di HP (tolerance) tanpa memperbesar titiknya.
+    if (!S.map.getPane('saranPane')) S.map.createPane('saranPane').style.zIndex = 450;
+    if (!S.kanvasSaran) S.kanvasSaran = L.canvas({ pane: 'saranPane', padding: 0.3, tolerance: LAYAR_SENTUH ? 12 : 5 });
+    S.saran.forEach(x => {
+      const titik = L.circleMarker([x.lat, x.lng], { renderer: S.kanvasSaran, radius: 6.5, color: CONFIG_WARNA_SARAN, weight: 3, dashArray: '3 3',
+        fillColor: '#fff', fillOpacity: 1, bubblingMouseEvents: false });
+      if (!LAYAR_SENTUH) titik.bindTooltip(esc(x.nama), { direction: 'right', offset: [9, 0] });
+      titik.on('click', e => { titik.closeTooltip(); bukaKartuDiTitik(x, e); }).addTo(S.saranLayer);
     });
   }
   panel.hidden = false;
@@ -4497,7 +4911,7 @@ function renderSaran() {
       return n ? `<button type="button" data-jenis="${g.id}" aria-pressed="${jenisAktif === g.id}">${esc(g.label)} ${n}</button>` : '';
     }).join('')}</div>
     <ul class="saran-list">${S.saran.slice(0, tampil).map((x, i) => `<li>
-      <span class="isi"><b>${esc(x.nama)}</b><small>${esc([labelJenis(x.jenis), x.alamat].filter(Boolean).join(', '))} ${Math.round(x.jarak * 1000)} m</small></span>
+      <span class="isi" data-lihat-saran="${i}" role="button" tabindex="0" title="Tunjukkan di peta"><b>${esc(x.nama)}</b><small>${esc([labelJenis(x.jenis), x.alamat].filter(Boolean).join(', '))} ${Math.round(x.jarak * 1000)} m</small></span>
       <button type="button" class="btn btn-sm btn-line" data-saran="${i}">Tambah</button>
     </li>`).join('')}</ul>
     ${tampil < S.saran.length ? `<button type="button" class="btn btn-sm btn-line" id="saranLagi" style="width:100%;margin-top:8px">Tampilkan ${Math.min(SARAN_PER_HALAMAN, S.saran.length - tampil)} lagi (${tampil} dari ${S.saran.length} di daftar, semuanya sudah tampil di peta)</button>` : ''}`;
@@ -4552,9 +4966,113 @@ function tampilkanGagalSekitar(pesan, catatan) {
 function tutupSaran() { S.saranSemua = []; S.saranPenuh = []; S.saran = []; renderSaran(); }
 
 function tambahDariSaran(i) {
-  const x = (S.saran || [])[Number(i)];
+  bukaFormDariSaran((S.saran || [])[Number(i)]);
+}
+
+/** Buka form prospek yang sudah terisi dari satu calon prospek. Setelah disimpan, titik kuningnya dihapus. */
+function bukaFormDariSaran(x) {
   if (!x) return;
+  S.saranAsal = x;
   bukaFormProspek(null, { lat: x.lat, lng: x.lng, nama: x.nama, alamat: x.alamat, kategori: x.kategori, industri: labelJenis(x.jenis), sumber: 'Saran sekitar' });
+}
+
+const LAYAR_SENTUH = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+
+/** Kartu kecil di atas titik calon prospek: nama, jenis, alamat, jarak, lalu tambah langsung atau isi detail dulu. */
+function bukaKartuSaran(x, opsi) {
+  if (!S.map || !x) return;
+  opsi = opsi || {};
+  const jenis = labelJenis(x.jenis) || '';
+  const jarak = isFinite(x.jarak) ? Math.round(x.jarak * 1000) : null;
+  const el = document.createElement('div');
+  el.className = 'pop-saran';
+  el.innerHTML = `
+    <span class="ps-label">Calon prospek</span>
+    <b class="ps-nama">${esc(x.nama)}</b>
+    ${jenis ? `<span class="ps-jenis">${esc(jenis)}</span>` : ''}
+    <span class="ps-alamat">${esc(x.alamat || 'Alamat belum tercatat di data sumber')}</span>
+    ${jarak !== null ? `<span class="ps-jarak">${fmtNum.format(jarak)} m dari titik pusat pencarian</span>` : ''}
+    <div class="ps-aksi">
+      <button type="button" class="btn btn-sm btn-ink" data-ps="cepat">Tambah langsung</button>
+      <button type="button" class="btn btn-sm btn-line" data-ps="detail">Isi detail dulu</button>
+    </div>
+    <p class="ps-catatan">Tambah langsung menyimpan dengan status Teridentifikasi. PIC dan detail lain bisa dilengkapi nanti.</p>
+    <p class="form-error ps-error" hidden></p>
+    <a class="ps-gmaps" href="https://www.google.com/maps/search/?api=1&query=${Number(x.lat).toFixed(6)},${Number(x.lng).toFixed(6)}" target="_blank" rel="noopener">Cek di Google Maps</a>`;
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-ps]');
+    if (!b) return;
+    if (b.dataset.ps === 'detail') { S.map.closePopup(); bukaFormDariSaran(x); }
+    else tambahLangsungSaran(x, el, b);
+  });
+  // Titik yang dipilih disorot selama kartunya terbuka
+  if (S.sorotSaran) S.sorotSaran.remove();
+  S.sorotSaran = L.circleMarker([x.lat, x.lng], { renderer: S.kanvasSaran, radius: 9, color: '#FFFFFF', weight: 3, fillColor: CONFIG_WARNA_SARAN, fillOpacity: 1, interactive: false }).addTo(S.map);
+  const kartu = L.popup({ className: 'pop-saran-wrap', maxWidth: 300, minWidth: 240, offset: [0, -8], autoPanPadding: [24, 72] })
+    .setLatLng([x.lat, x.lng]).setContent(el);
+  kartu.on('remove', () => { if (S.sorotSaran) { S.sorotSaran.remove(); S.sorotSaran = null; } });
+  if (opsi.geser) S.map.panTo([x.lat, x.lng], { animate: !reduceMotion });
+  kartu.openOn(S.map);
+}
+
+/** Di kawasan padat beberapa titik bisa bertumpuk di bawah jari atau kursor: tampilkan daftar nama dulu. */
+function bukaKartuDiTitik(x, e) {
+  const p0 = e && e.containerPoint ? e.containerPoint : S.map.latLngToContainerPoint([x.lat, x.lng]);
+  const batas = LAYAR_SENTUH ? 18 : 12;
+  const dekat = (S.saran || [])
+    .map(y => ({ y: y, d: S.map.latLngToContainerPoint([y.lat, y.lng]).distanceTo(p0) }))
+    .filter(o => o.d <= batas).sort((a, b) => a.d - b.d);
+  if (dekat.length <= 1) { bukaKartuSaran(x); return; }
+  const tampil = dekat.slice(0, 8);
+  const el = document.createElement('div');
+  el.className = 'pop-saran';
+  el.innerHTML = `
+    <span class="ps-label">${dekat.length} calon prospek di titik ini</span>
+    <ul class="ps-pilih">${tampil.map((o, i) => `<li><button type="button" data-ps-pilih="${i}"><b>${esc(o.y.nama)}</b><small>${esc([labelJenis(o.y.jenis), o.y.alamat].filter(Boolean).join(', '))}</small></button></li>`).join('')}</ul>
+    ${dekat.length > tampil.length ? `<p class="ps-catatan">Perbesar peta untuk melihat ${dekat.length - tampil.length} lainnya.</p>` : ''}`;
+  el.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-ps-pilih]');
+    if (b) bukaKartuSaran(tampil[Number(b.dataset.psPilih)].y);
+  });
+  L.popup({ className: 'pop-saran-wrap', maxWidth: 300, minWidth: 240, offset: [0, -8], autoPanPadding: [24, 72] })
+    .setLatLng(S.map.containerPointToLatLng(p0)).setContent(el).openOn(S.map);
+}
+
+/** Simpan calon prospek sebagai prospek baru dalam satu klik, tanpa membuka form. */
+async function tambahLangsungSaran(x, el, btn) {
+  const err = el.querySelector('.ps-error');
+  err.hidden = true;
+  const data = {
+    nama: x.nama, kategori: x.kategori || 'Lainnya', hubungan: CONFIG.HUBUNGAN[0], industri: labelJenis(x.jenis) || '',
+    alamat: x.alamat || '', lat: Number(x.lat).toFixed(6), lng: Number(x.lng).toFixed(6),
+    status: CONFIG.STATUS[0].id, potensi: 'Sedang', sumber: 'Saran sekitar', alasan: '',
+    estimasi_nilai: '', petugas: '', pic: '', catatan: '', produk: ''
+  };
+  $$('[data-ps]', el).forEach(b => { b.disabled = true; });
+  setBusy(btn, true, 'Menyimpan...');
+  try {
+    const r = await api('saveProspect', { prospek: data, expected: '' });
+    upsertProspek(r.prospek);
+    hapusDariSaran(x);
+    toast('Ditambahkan ke prospek: ' + r.prospek.nama);
+    el.innerHTML = `
+      <span class="ps-label ps-label-ok">Sudah jadi prospek</span>
+      <b class="ps-nama">${esc(r.prospek.nama)}</b>
+      <span class="ps-alamat">Status Teridentifikasi. Tetapkan PIC dan lengkapi detailnya supaya masuk prioritas di Beranda.</span>
+      <div class="ps-aksi"><button type="button" class="btn btn-sm btn-ink" data-ps-buka>Buka prospek</button></div>`;
+    el.querySelector('[data-ps-buka]').addEventListener('click', () => { S.map.closePopup(); pilih(String(r.prospek.id), { fly: false }); });
+  } catch (e) {
+    $$('[data-ps]', el).forEach(b => { b.disabled = false; });
+    setBusy(btn, false);
+    tanganiError(e, err);
+  }
+}
+
+/** Buang satu tempat dari calon prospek (misalnya karena baru saja ditambahkan), lalu gambar ulang. */
+function hapusDariSaran(x) {
+  const sama = y => y === x || (normalNama(y.nama) === normalNama(x.nama) && jarakKm(y, x) < 0.02);
+  ['saranSemua', 'saranPenuh'].forEach(k => { if (Array.isArray(S[k])) S[k] = S[k].filter(y => !sama(y)); });
+  renderSaran();
 }
 
 /* ================================================================
@@ -4601,7 +5119,7 @@ function renderAreaLingkaran() {
 
   if (S.map) {
     if (!S.areaLayer) S.areaLayer = L.layerGroup().addTo(S.map);
-    L.circle([a.lat, a.lng], { radius: a.radius, color: '#1E955F', weight: 2, fillOpacity: .07 }).addTo(S.areaLayer);
+    L.circle([a.lat, a.lng], { radius: a.radius, color: '#1E955F', weight: 2, fillOpacity: .07, interactive: false }).addTo(S.areaLayer);
 
     const pusat = L.marker([a.lat, a.lng], {
       icon: L.divIcon({ className: 'mk-wrap', html: '<span class="mk-pusat"></span>', iconSize: [20, 20], iconAnchor: [10, 10] }),
@@ -4702,10 +5220,13 @@ async function potensiSekitarSaya() {
 /* ================================================================
  *  RUTE KUNJUNGAN
  * ================================================================ */
-function susunRute() {
+function susunRute(opsi) {
   if (!S.map) { toast('Peta belum siap', 'err'); return; }
+  opsi = opsi && Array.isArray(opsi.prospek) ? opsi : {};
   const batas = S.map.getBounds();
-  const kandidat = S.prospek
+  // Dari daftar tertentu (misalnya tugas visit hari ini) atau dari prospek prioritas di area peta
+  const kandidat = opsi.prospek ? opsi.prospek.map(p => ({ p: p, ll: latlng(p) })).filter(x => x.ll)
+    .map(x => Object.assign(x, { pr: skorProspek(x.p) })).slice(0, CONFIG.RUTE_MAKS) : S.prospek
     .filter(p => cocok(p, { area: false }) && !statusOf(p).akhir)
     .map(p => ({ p: p, ll: latlng(p) }))
     .filter(x => x.ll && batas.contains(x.ll))
@@ -4731,7 +5252,7 @@ function susunRute() {
     urut.push(pilih);
     posisi = pilih;
   }
-  S.rute = { mulai: mulai, stop: urut, total: total, dariGps: !!S.gpsMarker };
+  S.rute = { mulai: mulai, stop: urut, total: total, dariGps: !!S.gpsMarker, judul: opsi.judul || '' };
   renderRute();
   if (mqMobile.matches) { setView('list'); $('#rutePanel').scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' }); }
   toast(urut.length + ' tujuan disusun, total sekitar ' + total.toFixed(1) + ' km');
@@ -4754,7 +5275,7 @@ function renderRute() {
   if (S.map) {
     if (!S.ruteLayer) S.ruteLayer = L.layerGroup().addTo(S.map);
     const titik = [[S.rute.mulai.lat, S.rute.mulai.lng]].concat(S.rute.stop.map(x => [x.lat, x.lng]));
-    L.polyline(titik, { color: '#003D79', weight: 3, opacity: .75, dashArray: '6 6' }).addTo(S.ruteLayer);
+    L.polyline(titik, { color: '#003D79', weight: 3, opacity: .75, dashArray: '6 6', interactive: false }).addTo(S.ruteLayer);
     S.rute.stop.forEach((x, i) => {
       L.marker([x.lat, x.lng], {
         icon: L.divIcon({ className: 'mk-wrap', html: `<span class="rute-no">${i + 1}</span>`, iconSize: [22, 22], iconAnchor: [11, 30] }),
@@ -4768,7 +5289,7 @@ function renderRute() {
       <h2>Rute kunjungan</h2>
       <button type="button" class="icon-btn" id="tutupRute" aria-label="Tutup rute"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <p class="muted" style="margin:0;font-size:12.5px">${S.rute.stop.length} tujuan prioritas tertinggi di area peta, total sekitar ${S.rute.total.toFixed(1)} km. Titik awal: ${S.rute.dariGps ? 'lokasi Anda' : 'tengah peta'}.</p>
+    <p class="muted" style="margin:0;font-size:12.5px">${S.rute.stop.length} ${S.rute.judul ? 'tujuan dari ' + esc(S.rute.judul) : 'tujuan prioritas tertinggi di area peta'}, total sekitar ${S.rute.total.toFixed(1)} km. Titik awal: ${S.rute.dariGps ? 'lokasi Anda' : 'tengah peta'}.</p>
     <ol class="rute-list">${S.rute.stop.map((x, i) => `<li>
       <span class="rute-no">${i + 1}</span>
       <span class="isi"><b>${esc(x.p.nama)}</b><small>${esc(x.pr.tingkat.id)}, ${Math.round(x.jarak * 1000)} m dari titik sebelumnya. ${esc(langkahBerikut(x.p).teks)}</small></span>
@@ -4825,12 +5346,21 @@ function renderSwatches(aktif) {
 
 function renderTimList() {
   const ul = $('#dtList');
+  const namaTim = [...new Set(S.tim.map(m => m.tim).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'id'));
+  $('#dlNamaTim').innerHTML = namaTim.map(t => `<option value="${esc(t)}"></option>`).join('');
   if (!S.tim.length) { ul.innerHTML = '<li><p class="empty-card">Belum ada anggota tim.</p></li>'; return; }
-  ul.innerHTML = S.tim.map(m => {
+  // Dikelompokkan per tim, Leader paling atas di setiap tim
+  const urut = S.tim.slice().sort((a, b) => String(a.tim || '~').localeCompare(String(b.tim || '~'), 'id')
+    || ((b.peran === 'Leader') - (a.peran === 'Leader')) || String(a.nama).localeCompare(String(b.nama), 'id'));
+  let timSebelum = null;
+  ul.innerHTML = urut.map(m => {
     const n = S.prospek.filter(p => pemegang(p).includes(m.nama)).length;
-    return `<li>
+    const jalan = S.tugas.filter(g => g.status === 'Belum' && samaNama(g.ditugaskan_ke, m.nama)).length;
+    const kepala = (m.tim || '') !== timSebelum ? `<li class="tim-grup">${esc(m.tim || 'Belum masuk tim')}</li>` : '';
+    timSebelum = m.tim || '';
+    return `${kepala}<li>
       <i class="sw-dot" style="--c:${warnaAnggota(m.nama).warna}"></i>
-      <span class="nm"><b>${esc(m.nama)}</b><small>${esc(m.jabatan || '-')}, memegang ${n} prospek</small></span>
+      <span class="nm"><b>${esc(m.nama)}${m.peran === 'Leader' ? '<span class="peran-leader">Leader</span>' : ''}</b><small>${esc(m.jabatan || '-')}, memegang ${n} prospek${jalan ? ', ' + jalan + ' tugas visit berjalan' : ''}</small></span>
       <span class="tim-actions">
         <button type="button" class="btn btn-sm btn-line" data-tim-ubah="${esc(m.id)}">Ubah</button>
         <button type="button" class="btn btn-sm btn-danger" data-tim-hapus="${esc(m.id)}">Hapus</button>
@@ -4846,6 +5376,8 @@ function ubahAnggota(id) {
   S.editingTimId = String(m.id);
   f.elements.nama.value = m.nama || '';
   f.elements.jabatan.value = m.jabatan || '';
+  f.elements.tim.value = m.tim || '';
+  f.elements.peran.value = m.peran === 'Leader' ? 'Leader' : 'Anggota';
   renderSwatches(warnaAman(m.warna) || warnaTimBebas());
   $('#dtFormTitle').textContent = 'Ubah anggota';
   $('#dtSubmit').textContent = 'Simpan perubahan';
@@ -4861,7 +5393,8 @@ async function simpanAnggota(ev) {
   const warnaEl = f.querySelector('input[name=warna]:checked');
   const errEl = $('#dtError');
   if (!nama) { errEl.textContent = 'Nama anggota wajib diisi.'; errEl.hidden = false; return; }
-  const anggotaBaru = { nama: nama, jabatan: String(f.elements.jabatan.value || '').trim(), warna: warnaEl ? warnaEl.value : '' };
+  const anggotaBaru = { nama: nama, jabatan: String(f.elements.jabatan.value || '').trim(), warna: warnaEl ? warnaEl.value : '',
+    tim: String(f.elements.tim.value || '').replace(/,/g, ' ').replace(/\s+/g, ' ').trim(), peran: f.elements.peran.value === 'Leader' ? 'Leader' : 'Anggota' };
   if (S.editingTimId) anggotaBaru.id = S.editingTimId;
   const btn = $('#dtSubmit');
   setBusy(btn, true, 'Menyimpan...');
@@ -4947,7 +5480,7 @@ async function submitLogin(ev) {
     const d = await api('list');
     store.set(KEY.user, S.user);
     S.lastSync = sekarangStr();
-    applyData(d.prospek, d.aktivitas, d.tim);
+    applyData(d.prospek, d.aktivitas, d.tim, d.tugas);
     simpanCache();
     $('#dlgLogin').close();
     hideBanner();
@@ -4966,10 +5499,13 @@ async function submitLogin(ev) {
 function bukaAkun() {
   const f = $('#formAkun');
   f.elements.nama.value = S.user.nama || '';
-  $('#dkMode').textContent = S.demo ? 'Mode demo. Data hanya tersimpan di browser ini.' : 'Terhubung ke Google Sheets.';
+  $('#dkMode').textContent = S.demo ? 'Mode demo. Data hanya tersimpan di browser ini. Ganti nama ke anggota lain, misalnya Dimas Hakim, untuk melihat tampilan anggota.' : 'Terhubung ke Google Sheets.';
+  $('#dlNamaAnggota').innerHTML = S.tim.map(m => `<option value="${esc(m.nama)}"></option>`).join('');
+  const aku = saya();
   const nApp = S.aktivitas.filter(a => a.jenis !== 'Maintain').length;
   const nMtn = S.aktivitas.length - nApp;
   $('#dkMeta').innerHTML = `
+    <dt>Peran di tim</dt><dd>${aku ? esc((aku.peran === 'Leader' ? 'Leader' : 'Anggota') + (aku.tim ? ', ' + aku.tim : '')) : '<span class="td-alert">Nama belum ada di daftar tim</span>'}</dd>
     <dt>Jumlah prospek</dt><dd>${S.prospek.length}</dd>
     <dt>Total approach</dt><dd>${nApp}</dd>
     <dt>Total maintain</dt><dd>${nMtn}</dd>
@@ -5993,6 +6529,8 @@ function bindEvents() {
     const j = e.target.closest('[data-jenis]');
     if (j) { S.saranJenis = j.dataset.jenis; S.saranTampil = SARAN_PER_HALAMAN; renderSaran(); return; }
     if (e.target.closest('#saranLagi')) { S.saranTampil = (S.saranTampil || SARAN_PER_HALAMAN) + SARAN_PER_HALAMAN; renderSaran(); return; }
+    const lh = e.target.closest('[data-lihat-saran]');
+    if (lh) { bukaKartuSaran((S.saran || [])[Number(lh.dataset.lihatSaran)], { geser: true }); return; }
     const b = e.target.closest('[data-saran]');
     if (b) tambahDariSaran(b.dataset.saran);
   });
@@ -6013,6 +6551,12 @@ function bindEvents() {
     }
     const st = e.target.closest('[data-status-home]');
     if (st) { bukaPetaDengan(f => f.status.add(st.dataset.statusHome)); setWarnaMode('status'); return; }
+    const ts = e.target.closest('[data-tugas-selesai]');
+    if (ts) { ubahStatusTugas(ts.dataset.tugasSelesai, 'Selesai', ts); return; }
+    const tb = e.target.closest('[data-tugas-batal]');
+    if (tb) { ubahStatusTugas(tb.dataset.tugasBatal, 'Batal', tb); return; }
+    if (e.target.closest('[data-tugas-baru]')) { bukaFormTugas([]); return; }
+    if (e.target.closest('[data-tugas-rute]')) { ruteTugasHariIni(); return; }
     const buka = e.target.closest('[data-buka]');
     if (buka) {
       const id = String(buka.dataset.buka);
@@ -6062,10 +6606,15 @@ function bindEvents() {
 
   const detail = $('#detail');
   detail.addEventListener('click', e => {
+    const ts = e.target.closest('[data-tugas-selesai]');
+    if (ts) { ubahStatusTugas(ts.dataset.tugasSelesai, 'Selesai', ts); return; }
+    const tb = e.target.closest('[data-tugas-batal]');
+    if (tb) { ubahStatusTugas(tb.dataset.tugasBatal, 'Batal', tb); return; }
     const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT') return;
     const p = S.byId.get(S.selectedId); if (!p) return;
     const act = b.dataset.act;
     if (act === 'close') tutupDetail();
+    else if (act === 'tugaskan') bukaFormTugas([p.id]);
     else if (act === 'edit') bukaFormProspek(p);
     else if (act === 'log') bukaFormAktivitas(p);
     else if (act === 'delete') hapusProspek(p);
@@ -6088,6 +6637,18 @@ function bindEvents() {
   });
 
   $$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+
+  $('#formTugas').addEventListener('submit', simpanTugas);
+  // Pesan kesalahan hilang begitu isian diperbaiki
+  ['input', 'change'].forEach(ev => $('#formTugas').addEventListener(ev, e => { if (e.target.id !== 'dgCari') $('#dgError').hidden = true; }));
+  $('#dgCari').addEventListener('input', renderDgProspek);
+  $('#dgCari').addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+  $('#dgProspek').addEventListener('change', e => {
+    const c = e.target.closest('input[type=checkbox]');
+    if (!c) return;
+    if (c.checked) S.tugasPilih.add(c.value); else S.tugasPilih.delete(c.value);
+    $('#dgJumlah').textContent = S.tugasPilih.size ? S.tugasPilih.size + ' prospek dipilih' : 'Belum ada prospek dipilih';
+  });
 
   const fp = $('#formProspek');
   fp.addEventListener('submit', simpanProspek);
@@ -6190,7 +6751,7 @@ function bindEvents() {
     S.user.pin = ''; store.set(KEY.user, S.user); store.del(KEY.cache);
     $('#dlgAkun').close();
     S.selectedId = null; S.fitted = false; S.lastSync = null;
-    applyData([], [], []);
+    applyData([], [], [], []);
     bukaLogin();
   });
   $('#dkReset').addEventListener('click', async () => {
@@ -6254,7 +6815,8 @@ function init() {
   bukaHalaman(location.hash === '#peta' ? 'map' : 'home', { dariHash: true });
 
   if (S.demo) {
-    if (!S.user.nama) S.user.nama = 'Pengguna demo';
+    // Mode demo masuk sebagai Leader contoh, supaya fitur tugas visit bisa langsung dicoba
+    if (!S.user.nama || S.user.nama === 'Pengguna demo') S.user.nama = 'Rina Prasetyo';
     if (!store.get(KEY.bannerDemo, false)) {
       showBanner('Mode demo: data contoh hanya tersimpan di browser ini. Hubungkan ke Google Sheets lewat panduan setup agar data bisa dipakai bersama.', { kind: 'info', tutup: true });
     }
@@ -6268,7 +6830,7 @@ function init() {
   const cache = store.get(KEY.cache, null);
   if (S.user.pin && cache && cache.url === CONFIG.API_URL.trim() && Array.isArray(cache.prospek)) {
     S.lastSync = cache.waktu || null;
-    applyData(cache.prospek, cache.aktivitas, cache.tim);
+    applyData(cache.prospek, cache.aktivitas, cache.tim, cache.tugas);
   } else {
     renderAll();
   }
